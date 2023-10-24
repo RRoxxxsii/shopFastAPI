@@ -10,8 +10,8 @@ class AbstractModel(DeclarativeBase):
 class User(AbstractModel):
     __tablename__ = 'users'
 
-    name: Mapped[str] = mapped_column(String(50))
-    surname: Mapped[str] = mapped_column(String(50))
+    name: Mapped[str] = mapped_column(String(50), nullable=False)
+    surname: Mapped[str] = mapped_column(String(50), nullable=False)
     email: Mapped[str] = mapped_column(String(70), unique=True, index=True, nullable=False)
     hashed_password: Mapped[str] = mapped_column(String(50), nullable=False)
 
