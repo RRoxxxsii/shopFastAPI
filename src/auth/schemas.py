@@ -1,4 +1,7 @@
-from pydantic import BaseModel, EmailStr, field_validator, model_validator
+from datetime import datetime
+
+from pydantic import (BaseModel, ConfigDict, EmailStr, field_validator,
+                      model_validator)
 from sqlalchemy.orm import Session
 
 from src.models import User as UserModel
@@ -6,7 +9,11 @@ from src.models import User as UserModel
 db = Session()
 
 
-class User(BaseModel):
+class CustomBaseModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+
+class UserIn(CustomBaseModel):
     name: str
     surname: str
     email: EmailStr
@@ -30,3 +37,14 @@ class User(BaseModel):
         if query:
             raise ValueError('Email already exists')
         return cls
+
+
+class UserOut(CustomBaseModel):
+    id: int
+    name: str
+    surname: str
+    email: EmailStr
+    time_created: datetime
+    email_confirmed: bool
+    is_admin: bool
+    is_stuff: bool

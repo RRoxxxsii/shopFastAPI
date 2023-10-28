@@ -1,16 +1,19 @@
 from typing import AsyncGenerator
 
+from sqlalchemy import MetaData, NullPool
 from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
                                     create_async_engine)
 
-from .config import DB_NAME, DB_PASSWORD, DB_USER, DB_HOST, DB_PORT
+from .config import DB_PORT, DB_USER, DB_NAME, DB_PASS, DB_HOST
+
+DATABASE_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 
-DATABASE_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+engine = create_async_engine(DATABASE_URL, poolclass=NullPool)
+async_session_maker = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
-engine = create_async_engine(DATABASE_URL)
-async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
+metadata = MetaData()
 
 
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
