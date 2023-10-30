@@ -1,19 +1,9 @@
 from datetime import datetime
 
-from pydantic import (BaseModel, ConfigDict, EmailStr, field_validator,
-                      model_validator)
-from sqlalchemy.orm import Session
-
-from src.models import User as UserModel
-
-db = Session()
+from pydantic import BaseModel, EmailStr, model_validator
 
 
-class CustomBaseModel(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-
-class UserIn(CustomBaseModel):
+class UserIn(BaseModel):
     name: str
     surname: str
     email: EmailStr
@@ -29,17 +19,8 @@ class UserIn(CustomBaseModel):
             raise ValueError('Passwords do not match..')
         return self
 
-    @classmethod
-    @field_validator('email')
-    def validate_email_taken(cls):
-        email = cls.email
-        query = db.query(UserModel).filter(UserModel.email == email).first()
-        if query:
-            raise ValueError('Email already exists')
-        return cls
 
-
-class UserOut(CustomBaseModel):
+class UserOut(BaseModel):
     id: int
     name: str
     surname: str

@@ -1,5 +1,7 @@
-import bcrypt
-from fastapi import APIRouter, Depends
+import re
+
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
@@ -7,15 +9,27 @@ from src import models
 from src.auth import schemas
 from src.database import get_async_session
 
+
 router = APIRouter(prefix='/users', tags=['users'])
 
 
 @router.post('/sign-up/', response_model=schemas.UserOut, status_code=status.HTTP_201_CREATED)
 async def register(user: schemas.UserIn, session: AsyncSession = Depends(get_async_session)):
+    email = user.email
     db_user = models.User(
-        name=user.name, surname=user.surname, email=user.email, hashed_password=user.password1
+        name=user.name, surname=user.surname, email=email, hashed_password=user.password1
     )
+
     session.add(db_user)
-    await session.commit()
-    await session.refresh(db_user)
-    return db_user
+    try:
+        await session.commit()
+    except IntegrityError as err:
+        await session.rollback()
+        pattern = re.compile(r'DETAIL:\s+Key \((?P<field>.+?)\)=\((?P<value>.+?)\) already exists')
+        match = pattern.search(str(err))
+        raise HTTPException(
+            409, f'User with {match['field']} {match['value']} already exists'
+        )
+    else:
+        await session.refresh(db_user)
+        return db_user
