@@ -10,7 +10,8 @@ from src import models
 from src.auth import schemas
 from src.database import get_async_session
 
-router = APIRouter(prefix='/users', tags=['users'])
+
+router = APIRouter()
 
 
 @router.post('/sign-up/', response_model=schemas.UserOut, status_code=status.HTTP_201_CREATED,

@@ -23,9 +23,20 @@ class User(AbstractModel):
     is_stuff: Mapped[bool] = mapped_column(default=False)
 
     seller: Mapped['Seller'] = relationship(back_populates='user', uselist=False)
+    tokens: Mapped['Token'] = relationship(back_populates='user')
 
     def __repr__(self) -> str:
         return f'User<{self.id}> {self.name} + {self.surname}'
+
+
+class Token(AbstractModel):
+    __tablename__ = 'tokens'
+
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    user: Mapped['User'] = relationship(back_populates='tokens')
+
+    access_token: Mapped[str] = mapped_column(unique=True, index=True)
+    time_created = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class Seller(AbstractModel):
