@@ -13,7 +13,7 @@ class User(AbstractModel):
     name: Mapped[str] = mapped_column(String(50), nullable=False)
     surname: Mapped[str] = mapped_column(String(50), nullable=False)
     email: Mapped[str] = mapped_column(String(70), unique=True, index=True, nullable=False)
-    hashed_password: Mapped[str] = mapped_column(String(50), nullable=False)
+    hashed_password: Mapped[str] = mapped_column(String(100), nullable=False)
 
     time_created = mapped_column(DateTime(timezone=True), server_default=func.now())
 
