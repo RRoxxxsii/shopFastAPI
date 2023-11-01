@@ -3,7 +3,7 @@ from datetime import datetime
 from pydantic import BaseModel, EmailStr, model_validator
 
 
-class UserIn(BaseModel):
+class RegisterUserIn(BaseModel):
     name: str
     surname: str
     email: EmailStr
@@ -20,7 +20,7 @@ class UserIn(BaseModel):
         return self
 
 
-class UserOut(BaseModel):
+class RegisterUserOut(BaseModel):
     id: int
     name: str
     surname: str
@@ -29,3 +29,12 @@ class UserOut(BaseModel):
     email_confirmed: bool
     is_admin: bool
     is_stuff: bool
+
+
+class LoginUserIn(BaseModel):
+    email: str
+    password: str
+
+
+class Token(BaseModel):
+    access_token: str
