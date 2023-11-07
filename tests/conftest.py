@@ -1,4 +1,5 @@
 import asyncio
+import uuid
 from typing import AsyncGenerator
 
 import pytest
@@ -10,7 +11,8 @@ from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
 
 from src.database import DATABASE_URL, get_async_session, metadata
 from src.main import app
-from src.models import AbstractModel, User
+from src.models import AbstractModel, User, Token
+from src.secure import pwd_context
 
 engine_test = create_async_engine(DATABASE_URL, poolclass=NullPool)
 async_session_maker = async_sessionmaker(engine_test, expire_on_commit=False)
@@ -25,7 +27,7 @@ async def override_get_async_session() -> AsyncGenerator[AsyncSession, None]:
 app.dependency_overrides[get_async_session] = override_get_async_session
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(autouse=True)
 async def start_db():
     async with engine_test.begin() as conn:
         await conn.run_sync(AbstractModel.metadata.drop_all)
@@ -50,3 +52,25 @@ client = TestClient(app)
 async def ac() -> AsyncGenerator[AsyncClient, None]:
     async with AsyncClient(app=app, base_url="http://test") as ac:
         yield ac
+
+
+def hash_pwd(pwd: str = 'hashed+12345') -> str:
+    return pwd_context.hash(pwd)
+
+
+@pytest.fixture
+async def user():
+    async with async_session_maker() as session:
+        user = User(name='name', surname='surname', email='testuser@example.com', hashed_password=hash_pwd())
+        session.add(user)
+        await session.commit()
+    return user
+
+
+@pytest.fixture
+async def token(user):
+    async with async_session_maker() as session:
+        token = Token(user=user, access_token=str(uuid.uuid4()))
+        session.add(token)
+        await session.commit()
+    return str(token)

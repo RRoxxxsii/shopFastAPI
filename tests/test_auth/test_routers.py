@@ -65,8 +65,8 @@ class TestLoginToken:
         }
                                  )
 
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert eval(response.content.decode()) == {"detail": "Incorrect password"}
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert eval(response.content.decode()) == {"detail": "User with provided credentials not found"}
 
     async def test_password_does_not_match(self, ac: AsyncClient, user):
         """

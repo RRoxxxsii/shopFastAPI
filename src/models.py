@@ -38,6 +38,9 @@ class Token(AbstractModel):
     access_token: Mapped[str] = mapped_column(unique=True, index=True)
     time_created = mapped_column(DateTime(timezone=True), server_default=func.now())
 
+    def __repr__(self):
+        return self.access_token
+
 
 class Seller(AbstractModel):
     __tablename__ = 'sellers'
@@ -50,7 +53,7 @@ class Seller(AbstractModel):
     company_description: Mapped[str] = mapped_column(Text, nullable=False)
 
     bank_name: Mapped[str] = mapped_column(nullable=False)
-    tin: Mapped[str] = mapped_column(String(10), unique=True, nullable=False)     # Tax Identification Number
+    tin: Mapped[str] = mapped_column(String(12), unique=True, nullable=False)     # Tax Identification Number
     bic: Mapped[str] = mapped_column(String(9), nullable=False)           # Bank Identified Code
     trrc: Mapped[str] = mapped_column(String(9), nullable=False)          # Tax Registration Reason Code
     an: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)           # AccountNumber
