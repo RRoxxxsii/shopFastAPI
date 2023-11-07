@@ -1,8 +1,5 @@
 import re
 
-import aiohttp
-from starlette import status
-
 from src.http_session import HTTPSessionManager
 
 

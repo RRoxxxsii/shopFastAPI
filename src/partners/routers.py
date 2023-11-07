@@ -9,9 +9,9 @@ from starlette import status
 
 from src.database import get_async_session
 from src.models import Seller
+from src.partners import schemas
 from src.partners.validate_api import validate
 from src.secure import apikey_scheme
-from src.partners import schemas
 from src.users import get_user_by_token
 
 router = APIRouter()
@@ -46,7 +46,7 @@ async def become_partner_exist_account(
     )
     if not all((trrc_valid, bic_valid, tin_valid, mobile_valid)):
         raise HTTPException(
-            status.HTTP_409_CONFLICT, f'Credentials are not valid'
+            status.HTTP_409_CONFLICT, 'Credentials are not valid'
         )
     user = await get_user_by_token(token=access_token, session=session)
     seller = Seller(
@@ -64,9 +64,8 @@ async def become_partner_exist_account(
         await session.rollback()
         pattern = re.compile(r'DETAIL:\s+Key \((?P<field>.+?)\)=\((?P<value>.+?)\) already exists')
         match = pattern.search(str(err))
-        #print(match)
         raise HTTPException(
-            status.HTTP_409_CONFLICT, 'a'
+            status.HTTP_409_CONFLICT, f'User with {match["field"]} {match["value"]} already exists'
         )
     else:
         await session.refresh(seller)

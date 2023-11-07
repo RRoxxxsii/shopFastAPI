@@ -1,10 +1,5 @@
-import pytest
 from httpx import AsyncClient
-from sqlalchemy import select
 from starlette import status
-
-from src import models
-from tests.conftest import async_session_maker
 
 
 class TestBecomePartnerExistsAccount:
@@ -55,3 +50,4 @@ class TestBecomePartnerExistsAccount:
         }, headers={'Authorization': token})
 
         assert response.status_code == status.HTTP_409_CONFLICT
+        assert eval(response.content.decode(), {"detail": "User with tin 381111467850 already exists"})

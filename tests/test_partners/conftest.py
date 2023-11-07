@@ -7,7 +7,7 @@ from tests.conftest import async_session_maker, hash_pwd
 
 @pytest.fixture(scope='session', autouse=True)
 async def httpsession():
-    async with aiohttp.ClientSession(trust_env=True) as session:
+    async with aiohttp.ClientSession(trust_env=True):
         yield
 
 
@@ -26,6 +26,3 @@ async def seller():
         session.add_all([user, seller])
         await session.commit()
     return seller
-
-
-

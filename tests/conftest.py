@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
 
 from src.database import DATABASE_URL, get_async_session, metadata
 from src.main import app
-from src.models import AbstractModel, User, Token
+from src.models import AbstractModel, Token, User
 from src.secure import pwd_context
 
 engine_test = create_async_engine(DATABASE_URL, poolclass=NullPool)
