@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.schemas import RegisterUserIn
-from src.models import User, Token
+from src.models import Token, User
 
 
 class BaseCrud:
@@ -36,6 +36,3 @@ class RegisterUserCrud(BaseFindUser):
         await self.session.commit()
         await self.session.refresh(user)
         return user
-
-
-

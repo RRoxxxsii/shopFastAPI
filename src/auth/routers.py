@@ -1,17 +1,11 @@
-import re
-import uuid
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from src import models
 from src.auth import schemas
 from src.auth.crud import CreateTokenCRUD, RegisterUserCrud
 from src.database import get_async_session
-from src.models import Token
 from src.secure import pwd_context
 
 router = APIRouter()
