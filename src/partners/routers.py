@@ -53,8 +53,7 @@ async def become_partner_exist_account(
         user=user, bic=bic, trrc=trrc, mobile=mobile, an=seller.an,
         bank_name=seller.bank_name, company_name=seller.company_name,
         company_description=seller.company_description,
-        additional=seller.additional, tin=seller.tin, passport_scan='a',
-        tc_scan='a'
+        additional=seller.additional, tin=seller.tin
     )
 
     session.add(seller)

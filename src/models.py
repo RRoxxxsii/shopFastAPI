@@ -58,9 +58,6 @@ class Seller(AbstractModel):
     trrc: Mapped[str] = mapped_column(String(9), nullable=False)          # Tax Registration Reason Code
     an: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)           # AccountNumber
 
-    passport_scan: Mapped[str] = mapped_column(String(130), nullable=False, unique=True)
-    tc_scan: Mapped[str] = mapped_column(String(130), nullable=False, unique=True)       # Trademark Certificate
-
     additional: Mapped[str | None] = mapped_column(Text, nullable=True)
     time_created = mapped_column(DateTime(timezone=True), server_default=func.now())
 

@@ -20,8 +20,7 @@ async def seller():
 
         seller = Seller(
             user=user, mobile='88005553535', company_name='Name', company_description='Description',
-            bank_name='Sber', tin='381111467850', bic='044525225', trrc='775001001', an='783768329692',
-            passport_scan='aaa', tc_scan='bbb'
+            bank_name='Sber', tin='381111467850', bic='044525225', trrc='775001001', an='783768329692'
         )
         session.add_all([user, seller])
         await session.commit()
