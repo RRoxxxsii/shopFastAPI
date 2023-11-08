@@ -9,6 +9,7 @@ from starlette import status
 
 from src import models
 from src.auth import schemas
+from src.auth.crud import CreateTokenCRUD, RegisterUserCrud
 from src.database import get_async_session
 from src.models import Token
 from src.secure import pwd_context
@@ -18,9 +19,10 @@ router = APIRouter()
 
 @router.post('/create-token/')
 async def create_token(user: schemas.LoginUserIn, session: AsyncSession = Depends(get_async_session)):
-    statement = select(models.User).where(models.User.email == user.email)
-    db_user = await session.execute(statement)
-    db_user = db_user.scalar_one_or_none()
+
+    crud = CreateTokenCRUD(session)
+    db_user = await crud.get_user_exists(email=user.email)
+
     if not db_user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -32,8 +34,8 @@ async def create_token(user: schemas.LoginUserIn, session: AsyncSession = Depend
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='Incorrect password'
         )
-    token = Token(user_id=db_user.id, access_token=str(uuid.uuid4()))
-    session.add(token)
+
+    token = await crud.create_token(db_user)
     return token
 
 
@@ -52,20 +54,14 @@ async def create_token(user: schemas.LoginUserIn, session: AsyncSession = Depend
              )
 async def register(user: schemas.RegisterUserIn, session: AsyncSession = Depends(get_async_session)):
     hashed_password = pwd_context.hash(user.password1)
-    db_user = models.User(
-        name=user.name, surname=user.surname, email=user.email, hashed_password=hashed_password
-    )
 
-    session.add(db_user)
-    try:
-        await session.commit()
-    except IntegrityError as err:
-        await session.rollback()
-        pattern = re.compile(r'DETAIL:\s+Key \((?P<field>.+?)\)=\((?P<value>.+?)\) already exists')
-        match = pattern.search(str(err))
+    crud = RegisterUserCrud(session)
+    db_user = await crud.get_user_exists(user.email)
+
+    if db_user:
         raise HTTPException(
-            status.HTTP_409_CONFLICT, f'User with {match["field"]} {match["value"]} already exists'
+            status.HTTP_409_CONFLICT, f'User with email {db_user.email} already exists'
         )
-    else:
-        await session.refresh(db_user)
-        return db_user
+
+    user = await crud.create_user(user, hashed_password)
+    return user
