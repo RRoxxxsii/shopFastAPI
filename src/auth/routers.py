@@ -1,21 +1,18 @@
-
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from src.auth import schemas
-from src.auth.crud import CreateTokenCRUD, RegisterUserCrud
-from src.database import get_async_session
+from src.auth.dependencies import get_auth_service
+from src.auth.service import AuthService
 from src.secure import pwd_context
 
 router = APIRouter()
 
 
 @router.post('/create-token/')
-async def create_token(user: schemas.LoginUserIn, session: AsyncSession = Depends(get_async_session)):
+async def create_token(user: schemas.LoginUserIn, service: AuthService = Depends(get_auth_service)):
 
-    crud = CreateTokenCRUD(session)
-    db_user = await crud.get_user_exists(email=user.email)
+    db_user = await service.get_user_exists(email=user.email)
 
     if not db_user:
         raise HTTPException(
@@ -29,7 +26,7 @@ async def create_token(user: schemas.LoginUserIn, session: AsyncSession = Depend
             detail='Incorrect password'
         )
 
-    token = await crud.create_token(db_user)
+    token = await service.create_token(db_user)
     return token
 
 
@@ -46,16 +43,15 @@ async def create_token(user: schemas.LoginUserIn, session: AsyncSession = Depend
                      },
                  }
              )
-async def register(user: schemas.RegisterUserIn, session: AsyncSession = Depends(get_async_session)):
+async def register(user: schemas.RegisterUserIn, service: AuthService = Depends(get_auth_service)):
     hashed_password = pwd_context.hash(user.password1)
 
-    crud = RegisterUserCrud(session)
-    db_user = await crud.get_user_exists(user.email)
+    db_user = await service.get_user_exists(user.email)
 
     if db_user:
         raise HTTPException(
             status.HTTP_409_CONFLICT, f'User with email {db_user.email} already exists'
         )
 
-    user = await crud.create_user(user, hashed_password)
+    user = await service.create_user(user, hashed_password)
     return user

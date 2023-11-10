@@ -1,37 +1,32 @@
+import asyncio
+import re
 
-class TINValidation:
+from src.http_session import HTTPSessionManager
+from src.partners.crud import UpgradePartnerCrud
 
+
+class APICall:
     @staticmethod
-    def _validate_tin_length_ten(tin: str) -> bool:
-        total = sum(map(int, tin[:8]))
-        modulo = total % 11
-        lowest_position_inn = tin % 10
-        lowest_position_modulo = modulo % 10
-        return lowest_position_modulo == lowest_position_inn
-
-    @staticmethod
-    def _validate_tin_length_twelve(tin: str):
-        coefficients = [7, 2, 4, 10, 3, 5, 9, 4, 6, 8]
-        coefficients2 = [7, 2, 4, 10, 3, 5, 9, 4, 6, 8]
-        total = sum([coefficients[i] * tin[i] for i in range(len(coefficients))])
-        total2 = sum([coefficients2[i] * tin[i] for i in range(len(coefficients2))])
-        modulo = total % 11
-        modulo2 = total2 % 11
-        check_sum = modulo % 10
-        check_sum2 = modulo2 % 10
-        return check_sum == tin[-2] and check_sum2 == tin[-1]
-
-    @staticmethod
-    def validate_tin(tin: str) -> bool:
-        if len(tin) == 10:
-            return TINValidation._validate_tin_length_ten(tin)
-        if len(tin) == 12:
-            return TINValidation._validate_tin_length_twelve(tin)
-        return False
+    async def validate(url: str):
+        session = HTTPSessionManager.get_session()
+        async with session.get(url, ssl=False) as response:
+            text = await response.text()
+            res = re.findall(r'<label>status: <b>\d{3}</b></label>', text)
+            status_code = int(res[0].rstrip('</b></label>').lstrip('<label>status: <b>'))
+            return status_code == 200
 
 
-class TRRCValidation:
+class ValidateCredentials(APICall):
+    pass
 
-    @staticmethod
-    def validate_trrc(trrc: str):
-        return trrc == 0 or len(trrc) == 9       # Individual Entrepreneurs do not have TRRC
+
+class BecomePartnerService(UpgradePartnerCrud, ValidateCredentials):
+
+    async def validate_data(self):
+        trrc, bic, tin, mobile = await asyncio.gather(
+            self.validate(f'https://htmlweb.ru/api.php?obj=validator&m=kpp&kpp={self.seller.trrc}'),
+            self.validate(f'https://htmlweb.ru/api.php?obj=validator&m=bic&bic={self.seller.bic}'),
+            self.validate(f'https://htmlweb.ru/api.php?obj=validator&m=inn&inn={self.seller.tin}'),
+            self.validate(f'https://htmlweb.ru/api.php?obj=validator&m=phone&phone={self.seller.mobile}')
+        )
+        return all((trrc, bic, tin, mobile))

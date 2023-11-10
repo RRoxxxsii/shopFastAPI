@@ -1,15 +1,10 @@
 import uuid
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.schemas import RegisterUserIn
 from src.models import Token, User
-
-
-class BaseCrud:
-    def __init__(self, session: AsyncSession):
-        self.session = session
+from src.utils import BaseCrud
 
 
 class BaseFindUser(BaseCrud):
