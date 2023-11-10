@@ -4,14 +4,14 @@ from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
 from src.partners import schemas
-from src.partners.dependencies import become_partner_service
-from src.partners.service import BecomePartnerService
+from src.partners.dependencies import upgrade_partner_service
+from src.partners.service import UpgradePartnerService
 from src.secure import apikey_scheme
 
 router = APIRouter()
 
 
-@router.post('/register-as-seller/')
+@router.post('/register-as-seller/', status_code=status.HTTP_201_CREATED, )
 def become_partner_no_account():
     """
     Create account for the first times as partner,
@@ -36,7 +36,7 @@ def become_partner_no_account():
              )
 async def become_partner_exist_account(
         access_token: Annotated[str, Depends(apikey_scheme)],
-        service: BecomePartnerService = Depends(become_partner_service)
+        service: UpgradePartnerService = Depends(upgrade_partner_service)
 ):
 
     db_seller = await service.get_seller_exists()

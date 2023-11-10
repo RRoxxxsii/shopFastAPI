@@ -20,8 +20,7 @@ class ValidateCredentials(APICall):
     pass
 
 
-class BecomePartnerService(UpgradePartnerCrud, ValidateCredentials):
-
+class PartnerService(UpgradePartnerCrud, ValidateCredentials):
     async def validate_data(self):
         trrc, bic, tin, mobile = await asyncio.gather(
             self.validate(f'https://htmlweb.ru/api.php?obj=validator&m=kpp&kpp={self.seller.trrc}'),
@@ -30,3 +29,11 @@ class BecomePartnerService(UpgradePartnerCrud, ValidateCredentials):
             self.validate(f'https://htmlweb.ru/api.php?obj=validator&m=phone&phone={self.seller.mobile}')
         )
         return all((trrc, bic, tin, mobile))
+
+
+class UpgradePartnerService(PartnerService):
+    pass
+
+
+class BecomePartnerService(PartnerService):
+    pass
