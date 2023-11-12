@@ -5,7 +5,7 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
-from src.config import DB_HOST, DB_NAME, DB_PASS, DB_PORT, DB_USER
+from src.database.config import DB_HOST, DB_NAME, DB_PASS, DB_PORT, DB_USER
 from src.database import base
 
 sys.path.append(os.path.join(sys.path[0], 'src'))
