@@ -5,7 +5,7 @@ from sqlalchemy.orm import selectinload
 from starlette import status
 
 from src.database import get_async_session
-from src.models import Token, User
+from src.models.auth import Token, User
 
 
 class BaseCrud:
