@@ -1,4 +1,4 @@
-from fastapi import HTTPException, Depends
+from fastapi import Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -49,4 +49,3 @@ class BaseService:
 
     async def get_user_or_none(self, email: str) -> [User | None]:
         return await self.base_crud.get_user_or_none(email=email)
-

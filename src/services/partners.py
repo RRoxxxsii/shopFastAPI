@@ -1,5 +1,3 @@
-import asyncio
-
 from fastapi import Depends
 
 from src.api.partners.client import Client
@@ -44,5 +42,3 @@ class PartnerService:
             f'https://htmlweb.ru/api.php?obj=validator&m=inn&inn={seller_schema.tin}',
             f'https://htmlweb.ru/api.php?obj=validator&m=phone&phone={seller_schema.mobile}'
         )
-
-

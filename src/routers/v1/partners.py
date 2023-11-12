@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
-from src.schemas.partners import SellerOut, SellerIn
+from src.schemas.partners import SellerIn, SellerOut
 from src.secure import apikey_scheme
 from src.services.partners import PartnerService
 

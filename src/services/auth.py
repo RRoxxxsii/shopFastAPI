@@ -2,9 +2,9 @@ import uuid
 
 from fastapi import Depends
 
-from src.models.auth import User, Token
+from src.models.auth import Token, User
 from src.repositories.auth import AuthRepository
-from src.schemas.auth import LoginUserIn, RegisterUserIn
+from src.schemas.auth import RegisterUserIn
 from src.secure import pwd_context
 
 
@@ -26,7 +26,10 @@ class AuthService:
 
     async def create_user(self, user_schema: RegisterUserIn, hashed_password: str) -> User:
         user = User(
-            name=user_schema.name, surname=user_schema.surname, email=user_schema.email, hashed_password=hashed_password
+            name=user_schema.name,
+            surname=user_schema.surname,
+            email=user_schema.email,
+            hashed_password=hashed_password
         )
         return await self.auth_repository.create_user(user=user)
 
@@ -35,4 +38,3 @@ class AuthService:
 
     def hash_password(self, password: str) -> str:
         return pwd_context.hash(password)
-

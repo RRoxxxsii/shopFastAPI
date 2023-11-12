@@ -1,5 +1,3 @@
-import uuid
-
 from fastapi import Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,7 +5,7 @@ from sqlalchemy.orm import selectinload
 from starlette import status
 
 from src.database import get_async_session
-from src.models.auth import User, Token
+from src.models.auth import Token, User
 
 
 class AuthRepository:

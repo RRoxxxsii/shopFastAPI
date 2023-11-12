@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
-from src.schemas.auth import LoginUserIn, RegisterUserOut, RegisterUserIn
+from src.schemas.auth import LoginUserIn, RegisterUserIn, RegisterUserOut
 from src.services.auth import AuthService
 
 router = APIRouter()
