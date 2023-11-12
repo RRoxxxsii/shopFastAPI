@@ -3,25 +3,14 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
-from src.partners import schemas
-from src.partners.dependencies import upgrade_partner_service
-from src.partners.service import UpgradePartnerService
+from src.schemas.partners import SellerOut, SellerIn
 from src.secure import apikey_scheme
+from src.services.partners import PartnerService
 
 router = APIRouter()
 
 
-@router.post('/register-as-seller/', status_code=status.HTTP_201_CREATED, )
-def become_partner_no_account():
-    """
-    Create account for the first times as partner,
-    when no account for the same user with same
-    credentials in common does not exist
-    """
-    pass
-
-
-@router.post('/upgrade-to-seller/', response_model=schemas.SellerOut, status_code=status.HTTP_201_CREATED,
+@router.post('/upgrade-to-seller/', response_model=SellerOut, status_code=status.HTTP_201_CREATED,
              responses={
                  status.HTTP_409_CONFLICT:
                      {
@@ -35,21 +24,22 @@ def become_partner_no_account():
                  }
              )
 async def become_partner_exist_account(
+        seller_schema: SellerIn,
         access_token: Annotated[str, Depends(apikey_scheme)],
-        service: UpgradePartnerService = Depends(upgrade_partner_service)
+        service: PartnerService = Depends()
 ):
 
-    db_seller = await service.get_seller_exists()
+    db_seller = await service.get_seller_or_none(seller_schema=seller_schema)
     if db_seller:
         raise HTTPException(
             status.HTTP_409_CONFLICT, 'User with these credentials already exists'
         )
 
-    is_valid = await service.validate_data()
+    is_valid = await service.validate_data(seller_schema=seller_schema)
     if not is_valid:
         raise HTTPException(
             status.HTTP_409_CONFLICT, 'Credentials are not valid'
         )
     user = await service.get_user_by_token(access_token)
-    seller = await service.create_seller(user)
+    seller = await service.create_seller(seller_schema, user=user)
     return seller

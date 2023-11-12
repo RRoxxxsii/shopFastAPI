@@ -5,7 +5,7 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
-from src import models
+from src.database import base
 from src.config import DB_HOST, DB_NAME, DB_PASS, DB_PORT, DB_USER
 
 sys.path.append(os.path.join(sys.path[0], 'src'))
@@ -30,7 +30,7 @@ if config.config_file_name is not None:
 # add your model's MetaData object here
 # for 'autogenerate' support
 
-target_metadata = models.AbstractModel.metadata
+target_metadata = base.AbstractModel.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

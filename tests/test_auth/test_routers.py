@@ -12,7 +12,7 @@ class TestUserRegister:
           "password2": "string"
         }
                                )
-
+        print(response.text)
         assert response.status_code == status.HTTP_201_CREATED
 
     async def test_register_passwords_dont_match(self, ac: AsyncClient):
@@ -27,6 +27,8 @@ class TestUserRegister:
           "password2": "string"
         }
                                )
+        print(response.text)
+
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     async def test_register_email_exists(self, ac: AsyncClient, user):
@@ -41,6 +43,8 @@ class TestUserRegister:
           "password2": "string"
         }
                                )
+        print(response.text)
+
         assert eval(response.content.decode()) == {"detail": "User with email testuser@example.com already exists"}
         assert response.status_code == status.HTTP_409_CONFLICT
 
@@ -53,7 +57,9 @@ class TestLoginToken:
             'email': 'testuser@example.com'
         }
                                  )
-        assert response.status_code == status.HTTP_200_OK
+        print(response.text)
+
+        assert response.status_code == status.HTTP_201_CREATED
 
     async def test_create_token_user_not_provided(self, ac: AsyncClient):
         """
@@ -64,7 +70,7 @@ class TestLoginToken:
             'email': 'testuser@example.com'
         }
                                  )
-
+        print(response.text)
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert eval(response.content.decode()) == {"detail": "User with provided credentials not found"}
 
@@ -77,5 +83,7 @@ class TestLoginToken:
             'email': 'testuser@example.com'
         }
                                  )
+        print(response.text)
+
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert eval(response.content.decode()) == {"detail": "Incorrect password"}

@@ -1,7 +1,9 @@
 import aiohttp
 import pytest
 
-from src.models import Seller, User
+from src.models.auth import User
+from src.models.partners import Seller
+
 from tests.conftest import async_session_maker, hash_pwd
 
 
