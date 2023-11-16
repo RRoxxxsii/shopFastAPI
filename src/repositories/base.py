@@ -1,11 +1,9 @@
 from abc import ABC, abstractmethod
 
-from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
-from starlette import status
 
-from src.models.auth import User, Token
+from src.models.auth import Token, User
 
 
 class AbstractRepository(ABC):

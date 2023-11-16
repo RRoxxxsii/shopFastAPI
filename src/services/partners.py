@@ -5,7 +5,7 @@ from src.models.auth import User
 from src.models.partners import Seller
 from src.repositories.partners import PartnerRepository
 from src.schemas.partners import SellerIn
-from src.services.common import BaseService
+from src.services.base import BaseService
 
 
 class PartnerService(BaseService):

@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import get_async_session
 from src.models.partners import Seller
-from src.repositories.common import BaseRepository
+from src.repositories.base import BaseRepository
 
 
 class PartnerRepository(BaseRepository):

@@ -6,7 +6,7 @@ from src.models.auth import Token, User
 from src.repositories.auth import AuthRepository
 from src.schemas.auth import RegisterUserIn
 from src.secure import pwd_context
-from src.services.common import BaseService
+from src.services.base import BaseService
 
 
 class AuthService(BaseService):
