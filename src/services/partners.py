@@ -4,7 +4,6 @@ from src.api.partners.client import Client
 from src.models.auth import User
 from src.models.partners import Seller
 from src.repositories.partners import PartnerRepository
-from src.schemas.partners import SellerIn
 from src.services.base import BaseService, CreateUser
 
 

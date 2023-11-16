@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from starlette import status
 
-from src.routers.docs.partners import upgrade_to_seller, register_as_partner
+from src.routers.docs.partners import register_as_partner, upgrade_to_seller
 from src.routers.responses import BaseResponse
 from src.schemas.partners import SellerIn, SellerOut, UserSellerIn
 from src.secure import apikey_scheme

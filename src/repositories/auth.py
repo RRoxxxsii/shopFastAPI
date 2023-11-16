@@ -17,4 +17,3 @@ class AuthRepository(BaseRepository, CreateUser):
         await self.session.commit()
         await self.session.refresh(token)
         return token.access_token
-

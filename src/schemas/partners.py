@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-from src.schemas.auth import RegisterUserOut, RegisterUserIn
+from src.schemas.auth import RegisterUserIn, RegisterUserOut
 
 
 class SellerIn(BaseModel):
