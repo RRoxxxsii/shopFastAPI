@@ -6,10 +6,10 @@ from src.models.auth import Token, User
 from src.repositories.auth import AuthRepository
 from src.schemas.auth import RegisterUserIn
 from src.secure import pwd_context
-from src.services.base import BaseService
+from src.services.base import BaseService, CreateUser
 
 
-class AuthService(BaseService):
+class AuthService(BaseService, CreateUser):
 
     def __init__(self, auth_repository: AuthRepository = Depends()) -> None:
         self.repository = auth_repository
@@ -29,6 +29,3 @@ class AuthService(BaseService):
 
     def check_password(self, password: str, hashed_password: str) -> bool:
         return pwd_context.verify(password, hashed_password)
-
-    def hash_password(self, password: str) -> str:
-        return pwd_context.hash(password)

@@ -4,10 +4,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import get_async_session
 from src.models.partners import Seller
-from src.repositories.base import BaseRepository
+from src.repositories.base import BaseRepository, CreateUser
 
 
-class PartnerRepository(BaseRepository):
+class PartnerRepository(BaseRepository, CreateUser):
 
     def __init__(self, session: AsyncSession = Depends(get_async_session)):
         self.session = session

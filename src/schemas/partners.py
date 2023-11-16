@@ -2,6 +2,8 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+from src.schemas.auth import RegisterUserOut, RegisterUserIn
+
 
 class SellerIn(BaseModel):
     mobile: str
@@ -18,3 +20,11 @@ class SellerIn(BaseModel):
 class SellerOut(SellerIn):
     id: int
     user_id: int
+
+
+class UserSellerOut(SellerOut, RegisterUserOut):
+    pass
+
+
+class UserSellerIn(SellerIn, RegisterUserIn):
+    pass

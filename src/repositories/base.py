@@ -17,6 +17,14 @@ class AbstractRepository(ABC):
         pass
 
 
+class CreateUser:
+    async def create_user(self, user: User) -> User:
+        self.session.add(user)
+        await self.session.commit()
+        await self.session.refresh(user)
+        return user
+
+
 class BaseRepository(AbstractRepository):
 
     async def get_user_by_token(self, token: str) -> [User | None]:
