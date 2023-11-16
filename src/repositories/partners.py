@@ -1,15 +1,13 @@
-from fastapi import Depends, HTTPException
+from fastapi import Depends
 from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
-from starlette import status
 
 from src.database import get_async_session
-from src.models.auth import Token, User
 from src.models.partners import Seller
+from src.repositories.common import BaseRepository
 
 
-class PartnerRepository:
+class PartnerRepository(BaseRepository):
 
     def __init__(self, session: AsyncSession = Depends(get_async_session)):
         self.session = session
@@ -25,20 +23,6 @@ class PartnerRepository:
 
         query = await self.session.execute(statement)
         return query.scalar_one_or_none()
-
-    async def get_user_by_token(self, token: str) -> [User | None]:
-        statement = select(Token).where(Token.access_token == token).options(
-            selectinload(Token.user))
-        token = await self.session.execute(statement)
-
-        if token:
-            token = token.scalar_one()
-            return token.user
-        else:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail='UNAUTHORIZED'
-            )
 
     async def create_seller(self, seller: Seller) -> Seller:
         self.session.add(seller)

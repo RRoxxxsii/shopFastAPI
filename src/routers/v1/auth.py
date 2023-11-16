@@ -44,7 +44,6 @@ async def register(user_schema: RegisterUserIn, service: AuthService = Depends()
 
     hashed_password = service.hash_password(user_schema.password1)
     db_user = await service.get_user_or_none(user_schema.email)
-
     if db_user:
         raise HTTPException(
             status.HTTP_409_CONFLICT, f'User with email {db_user.email} already exists'

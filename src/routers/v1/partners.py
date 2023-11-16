@@ -41,5 +41,11 @@ async def become_partner_exist_account(
             status.HTTP_409_CONFLICT, 'Credentials are not valid'
         )
     user = await service.get_user_by_token(access_token)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='UNAUTHORIZED'
+        )
+
     seller = await service.create_seller(seller_schema, user=user)
     return seller
