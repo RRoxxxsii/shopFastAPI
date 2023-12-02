@@ -20,6 +20,13 @@ class RegisterUserIn(BaseModel):
         return self
 
 
+class UserSchema(BaseModel):
+    name: str
+    surname: str
+    email: EmailStr
+    hashed_password: str
+
+
 class RegisterUserOut(BaseModel):
     id: int
     name: str

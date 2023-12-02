@@ -1,44 +1,57 @@
 from abc import ABC, abstractmethod
 
+from fastapi import Depends
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models.auth import Token, User
+from src.database import get_async_session, async_session_maker
 
 
 class AbstractRepository(ABC):
 
     @abstractmethod
-    def get_user_or_none(self, email: str) -> [User | None]:
-        pass
+    async def find_all(self):
+        raise NotImplementedError
 
     @abstractmethod
-    def get_user_by_token(self, token: str) -> [User | None]:
-        pass
+    async def get_by_id(self, pk: int):
+        raise NotImplementedError
+
+    @abstractmethod
+    async def create(self, dto):
+        raise NotImplementedError
+
+    @abstractmethod
+    async def get_by_field(self, field: str, value: str | int):
+        raise NotImplementedError
 
 
-class CreateUser:
-    async def create_user(self, user: User) -> User:
-        self.session.add(user)
-        await self.session.commit()
-        await self.session.refresh(user)
-        return user
+class SQLAlchemyRepository(AbstractRepository):
+    model = None
 
+    async def find_all(self):
+        async with async_session_maker() as session:
+            stmt = select(self.model)
+            res = await session.execute(stmt)
+            return res.all()
 
-class BaseRepository(AbstractRepository):
+    async def get_by_id(self, pk: int) -> model:
+        async with async_session_maker() as session:
+            stmt = select(self.model).where(self.model.id == int)
+            res = await session.execute(stmt)
+            return res.scalar_one_or_none()
 
-    async def get_user_by_token(self, token: str) -> [User | None]:
-        statement = select(Token).where(Token.access_token == token).options(
-            selectinload(Token.user))
-        token = await self.session.execute(statement)
+    async def create(self, dto):
+        async with async_session_maker() as session:
+            obj = self.model(**dto.model_dump())
+            session.add(obj)
+            await session.commit()
+            await session.refresh(obj)
+            return obj
 
-        if token:
-            token = token.scalar_one()
-            return token.user
-        else:
-            return None
-
-    async def get_user_or_none(self, email: str) -> [User | None]:
-        statement = select(User).where(User.email == email)
-        user = await self.session.execute(statement)
-        return user.scalar_one_or_none()
+    async def get_by_field(self, field: str, value: str | int):
+        async with async_session_maker() as session:
+            stmt = select(self.model).where(self.model.field == value)
+            result = await session.execute(stmt)
+            result = result.scalar_one_or_none()
+            return result
