@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from pydantic import BaseModel, EmailStr, model_validator
 
 
@@ -20,28 +18,6 @@ class RegisterUserIn(BaseModel):
         return self
 
 
-class UserSchema(BaseModel):
-    name: str
-    surname: str
-    email: EmailStr
-    hashed_password: str
-
-
-class RegisterUserOut(BaseModel):
-    id: int
-    name: str
-    surname: str
-    email: EmailStr
-    time_created: datetime
-    email_confirmed: bool
-    is_admin: bool
-    is_stuff: bool
-
-
 class LoginUserIn(BaseModel):
     email: str
     password: str
-
-
-class Token(BaseModel):
-    access_token: str

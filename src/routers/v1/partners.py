@@ -12,49 +12,59 @@
 # router = APIRouter()
 #
 #
-# @router.post('/upgrade-to-seller/', response_model=SellerOut, status_code=status.HTTP_201_CREATED,
-#              responses=upgrade_to_seller)
-# async def become_partner_exist_account(
-#         seller_schema: SellerIn,
-#         access_token: Annotated[str, Depends(apikey_scheme)],
-#         service: PartnerService = Depends()
-# ):
-#
-#     db_seller = await service.get_seller_or_none(seller_schema=seller_schema)
-#     if db_seller:
-#         BaseResponse.raise_409()
-#
-#     is_valid = await service.validate_data(seller_schema=seller_schema)
-#     if not is_valid:
-#         BaseResponse.raise_400()
-#
-#     user = await service.get_user_by_token(access_token)
-#     if not user:
-#         BaseResponse.raise_401()
-#     seller = await service.create_seller(seller_schema, user=user)
-#     return seller
 #
 #
-# @router.post('/register-as-partner/', response_model=SellerOut, status_code=status.HTTP_201_CREATED,
-#              responses=register_as_partner)
-# async def register_as_partner(
-#         seller_schema: UserSellerIn,
-#         service: PartnerService = Depends()
-# ):
-#     db_user = await service.get_user_or_none(email=seller_schema.email)
-#     if db_user:
-#         BaseResponse.raise_409()
-#
-#     db_seller = await service.get_seller_or_none(seller_schema)
-#     if db_seller:
-#         BaseResponse.raise_409()
-#
-#     is_valid = await service.validate_data(seller_schema=seller_schema)
-#     if not is_valid:
-#         BaseResponse.raise_400()
-#
-#     hashed_password = service.hash_password(seller_schema.password1)
-#
-#     user = await service.create_user(user_schema=seller_schema, hashed_password=hashed_password)
-#     seller = await service.create_seller(user=user, seller_schema=seller_schema)
-#     return seller
+from fastapi import Depends, APIRouter
+from starlette import status
+
+from src.exceptions.partner import SellerExists, DataNotValid
+from src.exceptions.user import UserExists
+from src.models.auth import User
+from src.routers.docs.partners import register_as_partner, upgrade_to_seller
+from src.routers.responses import BaseResponse
+from src.routers.v1.dependencies import create_partner_user_not_exists, create_partner_user_exists
+from src.routers.v1.responses.partners import SellerOut
+from src.routers.v1.requests.partners import UserSellerIn, SellerIn
+from src.secure.pwd import get_current_user
+from src.services.partner import CreatePartnerNotUserExistsService, CreatePartnerUserExistsService
+
+router = APIRouter()
+
+
+@router.post('/register-as-partner/', response_model=SellerOut, status_code=status.HTTP_201_CREATED,
+             responses=register_as_partner)
+async def register_as_partner(
+        seller_schema: UserSellerIn,
+        service: CreatePartnerNotUserExistsService = Depends(create_partner_user_not_exists)
+):
+    try:
+        seller = await service.execute(dto=seller_schema)
+    except UserExists:
+        BaseResponse.raise_409()
+    except SellerExists:
+        BaseResponse.raise_409('Seller with this credentials already exists')
+    except DataNotValid:
+        BaseResponse.raise_400()
+    else:
+        return seller
+
+
+@router.post('/upgrade-to-seller/', response_model=SellerOut, status_code=status.HTTP_201_CREATED,
+             responses=upgrade_to_seller)
+async def become_partner_exist_account(
+        seller_schema: SellerIn,
+        user: User = Depends(get_current_user),
+        service: CreatePartnerUserExistsService = Depends(create_partner_user_exists)
+):
+    if not user:
+        BaseResponse.raise_401()
+
+    try:
+        seller = await service.execute(dto=seller_schema, user=user)
+    except SellerExists:
+        BaseResponse.raise_409('Seller with this credentials already exists')
+    except DataNotValid:
+        BaseResponse.raise_400()
+    else:
+        return seller
+

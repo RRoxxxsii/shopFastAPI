@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-from src.schemas.auth import RegisterUserIn, RegisterUserOut
+from src.routers.v1.requests.auth import RegisterUserIn
 
 
 class SellerIn(BaseModel):
@@ -15,15 +15,6 @@ class SellerIn(BaseModel):
     trrc: str
     an: str
     additional: Optional[str] = None
-
-
-class SellerOut(SellerIn):
-    id: int
-    user_id: int
-
-
-class UserSellerOut(SellerOut, RegisterUserOut):
-    pass
 
 
 class UserSellerIn(SellerIn, RegisterUserIn):

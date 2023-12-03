@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import get_async_session, async_session_maker
-from src.models.auth import User
+from src.models.auth import User, Token
 from src.repositories.base import AbstractRepository, SQLAlchemyRepository
 
 
@@ -13,10 +13,10 @@ class AbstractUserRepository(AbstractRepository):
 
     @abstractmethod
     def get_user_by_email(self, email: str):
-        pass
+        raise NotImplementedError
 
 
-class UserRepository(SQLAlchemyRepository, AbstractUserRepository):
+class UserRepository(AbstractUserRepository, SQLAlchemyRepository):
     model = User
 
     async def get_user_by_email(self, email: str) -> User | None:

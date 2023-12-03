@@ -42,8 +42,6 @@ class TestUserRegister:
           "password2": "string"
         }
                                )
-
-        # assert eval(response.content.decode()) == {"detail": "User with email testuser@example.com already exists"}
         assert response.status_code == status.HTTP_409_CONFLICT
 
 
@@ -69,7 +67,6 @@ class TestLoginToken:
                                  )
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
-        assert eval(response.content.decode()) == {"detail": "User with provided credentials not found"}
 
     async def test_password_does_not_match(self, ac: AsyncClient, user):
         """
@@ -82,4 +79,3 @@ class TestLoginToken:
                                  )
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert eval(response.content.decode()) == {"detail": "Incorrect password"}

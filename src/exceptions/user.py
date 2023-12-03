@@ -1,8 +1,13 @@
+from src.exceptions.base import DomainException
 
 
-class AppException(BaseException):
+class UserExists(DomainException):
     pass
 
 
-class UserExists(AppException):
+class UserNotFound(DomainException):
+    pass
+
+
+class PasswordIsNotCorrect(DomainException):
     pass

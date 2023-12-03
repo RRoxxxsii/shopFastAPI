@@ -21,10 +21,6 @@ class AbstractRepository(ABC):
     async def create(self, dto):
         raise NotImplementedError
 
-    @abstractmethod
-    async def get_by_field(self, field: str, value: str | int):
-        raise NotImplementedError
-
 
 class SQLAlchemyRepository(AbstractRepository):
     model = None
@@ -48,10 +44,3 @@ class SQLAlchemyRepository(AbstractRepository):
             await session.commit()
             await session.refresh(obj)
             return obj
-
-    async def get_by_field(self, field: str, value: str | int):
-        async with async_session_maker() as session:
-            stmt = select(self.model).where(self.model.field == value)
-            result = await session.execute(stmt)
-            result = result.scalar_one_or_none()
-            return result
