@@ -1,6 +1,6 @@
 import re
 
-from src.api.httpSession_manager import HTTPSessionManager
+from src.api.httpSessionManager import HTTPSessionManager
 
 
 class APICall:

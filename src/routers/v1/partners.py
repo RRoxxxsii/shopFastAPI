@@ -1,27 +1,10 @@
-# from typing import Annotated
-#
-# from fastapi import APIRouter, Depends
-# from starlette import status
-#
-# from src.routers.docs.partners import register_as_partner, upgrade_to_seller
-# from src.routers.responses import BaseResponse
-# from src.schemas.partners import SellerIn, SellerOut, UserSellerIn
-# from src.secure import apikey_scheme
-# from src.services.partners import PartnerService
-#
-# router = APIRouter()
-#
-#
-#
-#
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
 from src.exceptions.partner import DataNotValid, SellerExists
 from src.exceptions.user import UserExists
 from src.models.auth import User
 from src.routers.docs.partners import register_as_partner, upgrade_to_seller
-from src.routers.responses import BaseResponse
 from src.routers.v1.dependencies import (create_partner_user_exists,
                                          create_partner_user_not_exists)
 from src.routers.v1.requests.partners import SellerIn, UserSellerIn
@@ -42,11 +25,11 @@ async def register_as_partner(
     try:
         seller = await service.execute(dto=seller_schema)
     except UserExists:
-        BaseResponse.raise_409()
+        raise HTTPException(status.HTTP_409_CONFLICT, 'User with these credentials already exists')
     except SellerExists:
-        BaseResponse.raise_409('Seller with this credentials already exists')
+        raise HTTPException(status.HTTP_409_CONFLICT, 'Seller with these credentials already exists')
     except DataNotValid:
-        BaseResponse.raise_400()
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, 'Credentials are not valid')
     else:
         return seller
 
@@ -59,13 +42,13 @@ async def become_partner_exist_account(
         service: CreatePartnerUserExistsService = Depends(create_partner_user_exists)
 ):
     if not user:
-        BaseResponse.raise_401()
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='UNAUTHORIZED')
 
     try:
         seller = await service.execute(dto=seller_schema, user=user)
     except SellerExists:
-        BaseResponse.raise_409('Seller with this credentials already exists')
+        raise HTTPException(status.HTTP_409_CONFLICT, 'Seller with these credentials already exists')
     except DataNotValid:
-        BaseResponse.raise_400()
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, 'Credentials are not valid')
     else:
         return seller

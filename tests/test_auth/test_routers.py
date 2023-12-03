@@ -12,7 +12,6 @@ class TestUserRegister:
           "password2": "string"
         }
                                )
-        print(response.content.decode())
         assert response.status_code == status.HTTP_201_CREATED
 
     async def test_register_passwords_dont_match(self, ac: AsyncClient):

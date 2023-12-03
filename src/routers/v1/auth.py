@@ -1,9 +1,8 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
 from src.exceptions.user import PasswordIsNotCorrect, UserExists, UserNotFound
 from src.routers.docs.auth import sign_up
-from src.routers.responses import BaseResponse
 from src.routers.v1.dependencies import (create_token_service,
                                          create_user_service)
 from src.routers.v1.requests.auth import LoginUserIn, RegisterUserIn
@@ -19,9 +18,9 @@ async def create_token(user_schema: LoginUserIn, service: CreateTokenService = D
     try:
         token = await service.execute(dto=user_schema)
     except UserNotFound:
-        raise BaseResponse.raise_404()
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Not Found')
     except PasswordIsNotCorrect:
-        raise BaseResponse.raise_400()
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, 'Credentials are not valid')
     else:
         return token
 
@@ -32,6 +31,6 @@ async def register(user_schema: RegisterUserIn, service: CreateUserService = Dep
     try:
         user = await service.execute(dto=user_schema)
     except UserExists:
-        raise BaseResponse.raise_409()
+        raise HTTPException(status.HTTP_409_CONFLICT, 'User with these credentials already exists')
     else:
         return user
