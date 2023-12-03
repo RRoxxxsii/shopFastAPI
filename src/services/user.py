@@ -1,11 +1,11 @@
 import uuid
 from typing import Type
 
-from src.exceptions.user import UserExists, UserNotFound, PasswordIsNotCorrect
-from src.models.auth import User, Token
+from src.dto.auth import TokenDTO, UserDTO
+from src.exceptions.user import PasswordIsNotCorrect, UserExists, UserNotFound
+from src.models.auth import Token, User
 from src.repositories.base import AbstractRepository
 from src.repositories.user import AbstractUserRepository
-from src.dto.auth import UserDTO, TokenDTO
 from src.secure.pwd import PwdAbstract
 
 

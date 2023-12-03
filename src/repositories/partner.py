@@ -1,6 +1,6 @@
 from abc import abstractmethod
 
-from sqlalchemy import select, or_
+from sqlalchemy import or_, select
 
 from src.database import async_session_maker
 from src.models.partners import Seller

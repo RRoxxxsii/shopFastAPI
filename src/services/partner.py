@@ -1,8 +1,8 @@
 from typing import Type
 
 from src.api.partners.client import AbstractClient
-from src.dto.partner import UserPartnerDTO, PartnerDTO
-from src.exceptions.partner import SellerExists, DataNotValid
+from src.dto.partner import UserPartnerDTO
+from src.exceptions.partner import DataNotValid, SellerExists
 from src.exceptions.user import UserExists
 from src.models.auth import User
 from src.models.partners import Seller
@@ -13,6 +13,11 @@ from src.services.user import CreateUserService
 
 
 class CreatePartnerMixin:
+
+    def __init__(self, partner_repo: Type[AbstractPartnerRepository], api_client: Type[AbstractClient]):
+        self.partner_repo: AbstractPartnerRepository = partner_repo()
+        self.api_client: AbstractClient = api_client()
+
     async def _get_seller_or_none(self, dto) -> Seller | None:
         seller = await self.partner_repo.get_partner_or_none(dto=dto)
         return seller
@@ -35,7 +40,8 @@ class CreatePartnerMixin:
 class CreatePartnerNotUserExistsService(CreateUserService, CreatePartnerMixin):
 
     def __init__(
-            self, partner_repo: Type[AbstractPartnerRepository],
+            self,
+            partner_repo: Type[AbstractPartnerRepository],
             user_repo: Type[AbstractUserRepository],
             api_client: Type[AbstractClient],
             pwd: Type[PwdAbstract]
@@ -47,7 +53,6 @@ class CreatePartnerNotUserExistsService(CreateUserService, CreatePartnerMixin):
     async def _get_user_or_none(self, email) -> User | None:
         user = await self.user_repo.get_user_by_email(email)
         return user
-
 
     async def execute(self, dto) -> Seller | None:
         user = await self._get_user_or_none(dto.email)
@@ -67,11 +72,11 @@ class CreatePartnerNotUserExistsService(CreateUserService, CreatePartnerMixin):
 
 class CreatePartnerUserExistsService(CreatePartnerMixin):
     def __init__(
-            self, partner_repo: Type[AbstractPartnerRepository],
+            self,
+            partner_repo: Type[AbstractPartnerRepository],
             api_client: Type[AbstractClient]
     ):
-        self.partner_repo: AbstractPartnerRepository = partner_repo()
-        self.api_client = api_client()
+        super().__init__(partner_repo, api_client)
 
     async def execute(self, dto, user: User) -> Seller:
         is_valid = await self._validate_data(dto)

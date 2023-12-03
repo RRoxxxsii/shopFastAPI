@@ -1,10 +1,11 @@
 from src.api.partners.client import Client
 from src.repositories.partner import PartnerRepository
 from src.repositories.token import TokenRepository
-from src.services.partner import CreatePartnerNotUserExistsService, CreatePartnerUserExistsService
-from src.services.user import CreateUserService, CreateTokenService
 from src.repositories.user import UserRepository
 from src.secure.pwd import PwdImpl
+from src.services.partner import (CreatePartnerNotUserExistsService,
+                                  CreatePartnerUserExistsService)
+from src.services.user import CreateTokenService, CreateUserService
 
 
 def create_user_service():

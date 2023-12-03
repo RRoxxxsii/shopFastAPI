@@ -14,19 +14,21 @@
 #
 #
 #
-from fastapi import Depends, APIRouter
+from fastapi import APIRouter, Depends
 from starlette import status
 
-from src.exceptions.partner import SellerExists, DataNotValid
+from src.exceptions.partner import DataNotValid, SellerExists
 from src.exceptions.user import UserExists
 from src.models.auth import User
 from src.routers.docs.partners import register_as_partner, upgrade_to_seller
 from src.routers.responses import BaseResponse
-from src.routers.v1.dependencies import create_partner_user_not_exists, create_partner_user_exists
+from src.routers.v1.dependencies import (create_partner_user_exists,
+                                         create_partner_user_not_exists)
+from src.routers.v1.requests.partners import SellerIn, UserSellerIn
 from src.routers.v1.responses.partners import SellerOut
-from src.routers.v1.requests.partners import UserSellerIn, SellerIn
-from src.secure.pwd import get_current_user
-from src.services.partner import CreatePartnerNotUserExistsService, CreatePartnerUserExistsService
+from src.secure.user import get_current_user
+from src.services.partner import (CreatePartnerNotUserExistsService,
+                                  CreatePartnerUserExistsService)
 
 router = APIRouter()
 
@@ -67,4 +69,3 @@ async def become_partner_exist_account(
         BaseResponse.raise_400()
     else:
         return seller
-

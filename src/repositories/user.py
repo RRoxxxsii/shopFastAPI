@@ -1,11 +1,9 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
-from fastapi import Depends
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database import get_async_session, async_session_maker
-from src.models.auth import User, Token
+from src.database import async_session_maker
+from src.models.auth import User
 from src.repositories.base import AbstractRepository, SQLAlchemyRepository
 
 

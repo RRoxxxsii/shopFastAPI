@@ -17,13 +17,3 @@ class PartnerDTO(BaseModel):
 
 class UserPartnerDTO(PartnerDTO):
     user_id: int
-    mobile: str
-    company_name: str
-    company_description: str
-    bank_name: str
-    tin: str = Field()
-    bic: str
-    trrc: str
-    an: str
-    additional: Optional[str] = None
-

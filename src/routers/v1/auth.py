@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends
 from starlette import status
 
-from src.exceptions.user import UserExists, UserNotFound, PasswordIsNotCorrect
+from src.exceptions.user import PasswordIsNotCorrect, UserExists, UserNotFound
 from src.routers.docs.auth import sign_up
 from src.routers.responses import BaseResponse
-from src.routers.v1.dependencies import create_user_service, create_token_service
+from src.routers.v1.dependencies import (create_token_service,
+                                         create_user_service)
+from src.routers.v1.requests.auth import LoginUserIn, RegisterUserIn
 from src.routers.v1.responses.auth import RegisterUserOut
-from src.routers.v1.requests.auth import RegisterUserIn, LoginUserIn
-from src.services.user import CreateUserService, CreateTokenService
-
+from src.services.user import CreateTokenService, CreateUserService
 
 router = APIRouter()
 
