@@ -6,14 +6,12 @@ from src.exceptions.user import PasswordIsNotCorrect, UserExists, UserNotFound
 from src.models.auth import Token, User
 from src.repositories.base import AbstractRepository
 from src.repositories.user import AbstractUserRepository
-from src.secure.pwd import PwdAbstract
 
 
 class CreateUserService:
 
-    def __init__(self, user_repo: Type[AbstractUserRepository], pwd: Type[PwdAbstract]):
+    def __init__(self, user_repo: Type[AbstractUserRepository]):
         self.user_repo = user_repo()
-        self.pwd = pwd()
 
     def _hash_password(self, password: str) -> str:
         return self.pwd.hash_password(password)
@@ -40,11 +38,9 @@ class CreateTokenService:
     def __init__(
             self, user_repo: Type[AbstractUserRepository],
             token_repo: Type[AbstractRepository],
-            pwd: Type[PwdAbstract]
     ) -> None:
         self.user_repo: AbstractUserRepository = user_repo()
         self.token_repo: AbstractRepository = token_repo()
-        self.pwd: PwdAbstract = pwd()
 
     def _check_password(self, password: str, hashed_password: str) -> bool:
         return self.pwd.check_password(password, hashed_password)

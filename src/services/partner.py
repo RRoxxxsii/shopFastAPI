@@ -1,88 +1,89 @@
 from typing import Type
 
-from src.api.partners.client import AbstractClient
-from src.dto.partner import UserPartnerDTO
+from src.api.partners.client import AbstractAPIClient
+from src.database.uow import UnitOfWork
+from src.dto.auth import UserDTO
+from src.dto.partner import FullUserPartnerDTO, UserPartnerDTO
 from src.exceptions.partner import DataNotValid, SellerExists
 from src.exceptions.user import UserExists
-from src.models.auth import User
 from src.models.partners import Seller
-from src.repositories.partner import AbstractPartnerRepository
-from src.repositories.user import AbstractUserRepository
-from src.secure.pwd import PwdAbstract
-from src.services.user import CreateUserService
+from src.secure.pwd import hash_password
 
 
-class CreatePartnerMixin:
+class BaseUseCase:
 
-    def __init__(self, partner_repo: Type[AbstractPartnerRepository], api_client: Type[AbstractClient]):
-        self.partner_repo: AbstractPartnerRepository = partner_repo()
-        self.api_client: AbstractClient = api_client()
-
-    async def _get_seller_or_none(self, dto) -> Seller | None:
-        seller = await self.partner_repo.get_partner_or_none(dto=dto)
-        return seller
-
-    async def _validate_data(self, dto) -> bool:
-        return await self.api_client.call(
-            f'https://htmlweb.ru/api.php?obj=validator&m=kpp&kpp={dto.trrc}',
-            f'https://htmlweb.ru/api.php?obj=validator&m=bic&bic={dto.bic}',
-            f'https://htmlweb.ru/api.php?obj=validator&m=inn&inn={dto.tin}',
-            f'https://htmlweb.ru/api.php?obj=validator&m=phone&phone={dto.mobile}'
-        )
-
-    async def _create_seller(self, dto, user_id: int) -> Seller:
-        dto = UserPartnerDTO(
-            **dto.model_dump(), user_id=user_id
-        )
-        return await self.partner_repo.create(dto)
+    def __init__(self, uow: UnitOfWork) -> None:
+        self.uow: UnitOfWork = uow
 
 
-class CreatePartnerNotUserExistsService(CreateUserService, CreatePartnerMixin):
+class SellerUseCase(BaseUseCase):
+    def __init__(self, uow: UnitOfWork, api_client: Type[AbstractAPIClient]):
+        super().__init__(uow)
+        self.api_client: Type[AbstractAPIClient] = api_client
 
+
+class CreateSellerUserDoesNotExists(SellerUseCase):
+
+    async def __call__(self, partner_dto, user_dto) -> Seller:
+        async with self.uow:
+            if await self.uow.user_repo.get_user_or_none(user_dto.email):
+                raise UserExists('User with this credentials already exists')
+            if await self.uow.partner_repo.get_partner_or_none(partner_dto):
+                raise SellerExists('Seller with this credentials already exists')
+            if not await self.api_client.call(partner_dto):
+                raise DataNotValid('Data you provided is not valid')
+            user = await self.uow.user_repo.create(
+                hashed_password=hash_password(user_dto.password1), **user_dto.model_dump(
+                    include={'name', 'surname', 'email'},
+                )
+            )
+            seller = await self.uow.partner_repo.create(user_id=user.id, **partner_dto.model_dump())
+            await self.uow.commit()
+            return seller
+
+
+class CreateSellerUserExists(SellerUseCase):
+
+    async def __call__(self, dto) -> Seller:
+        async with self.uow:
+            if await self.uow.partner_repo.get_partner_or_none(dto):
+                raise SellerExists('Seller with this credentials already exists')
+            if not await self.api_client.call(dto):
+                raise DataNotValid('Data you provided is not valid')
+            seller = await self.uow.partner_repo.create(dto=dto)
+            await self.uow.commit()
+            return seller
+
+
+class CreatePartnerUserExistsService:
     def __init__(
             self,
-            partner_repo: Type[AbstractPartnerRepository],
-            user_repo: Type[AbstractUserRepository],
-            api_client: Type[AbstractClient],
-            pwd: Type[PwdAbstract]
+            api_client: Type[AbstractAPIClient],
+            uow: UnitOfWork
     ):
-        super().__init__(user_repo, pwd)
-        self.partner_repo: AbstractPartnerRepository = partner_repo()
-        self.api_client = api_client()
+        self.api_client: Type[AbstractAPIClient] = api_client
+        self.uow: UnitOfWork = uow
 
-    async def _get_user_or_none(self, email) -> User | None:
-        user = await self.user_repo.get_user_by_email(email)
-        return user
+    async def _create_seller(self, dto):
+        return await CreateSellerUserExists(self.uow, self.api_client)(dto)
 
-    async def execute(self, dto) -> Seller | None:
-        user = await self._get_user_or_none(dto.email)
-        if user:
-            raise UserExists('User with this email already exists')
-        seller = await self._get_seller_or_none(dto)
-        if seller:
-            raise SellerExists('Seller with this credentials already exists')
-        is_valid = await self._validate_data(dto)
-        if not is_valid:
-            raise DataNotValid('Data you provided is not valid')
-        hashed_password = self._hash_password(dto.password1)
-        user = await self._create_user(dto, hashed_password=hashed_password)
-        seller = await self._create_seller(dto=dto, user_id=user.id)
+    async def execute(self, dto) -> Seller:
+        seller = await self._create_seller(dto)
         return seller
 
 
-class CreatePartnerUserExistsService(CreatePartnerMixin):
+class CreatePartnerUserDoesNotExistsService:
     def __init__(
             self,
-            partner_repo: Type[AbstractPartnerRepository],
-            api_client: Type[AbstractClient]
+            api_client: Type[AbstractAPIClient],
+            uow: UnitOfWork
     ):
-        super().__init__(partner_repo, api_client)
+        self.api_client: Type[AbstractAPIClient] = api_client
+        self.uow: UnitOfWork = uow
 
-    async def execute(self, dto, user: User) -> Seller:
-        is_valid = await self._validate_data(dto)
-        if not is_valid:
-            raise DataNotValid('Data you provided is not valid')
-        seller = await self._get_seller_or_none(dto)
-        if seller:
-            raise SellerExists('Seller with this credentials already exists')
-        return await self._create_seller(dto, user_id=user.id)
+    async def _create_seller(self, partner_dto, user_dto):
+        return await CreateSellerUserDoesNotExists(self.uow, self.api_client)(partner_dto, user_dto)
+
+    async def execute(self, partner_dto, user_dto) -> Seller:
+        seller = await self._create_seller(partner_dto, user_dto)
+        return seller

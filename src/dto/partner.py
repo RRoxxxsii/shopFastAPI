@@ -2,6 +2,8 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+from src.dto.auth import UserDTO
+
 
 class PartnerDTO(BaseModel):
     mobile: str
@@ -17,3 +19,8 @@ class PartnerDTO(BaseModel):
 
 class UserPartnerDTO(PartnerDTO):
     user_id: int
+
+
+class FullUserPartnerDTO(UserDTO, UserPartnerDTO):
+    pass
+

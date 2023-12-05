@@ -1,11 +1,16 @@
 from abc import ABC, abstractmethod
 
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import async_session_maker
 
 
 class AbstractRepository(ABC):
+
+    @abstractmethod
+    def __init__(self):
+        raise NotImplementedError
 
     @abstractmethod
     async def find_all(self):
@@ -23,22 +28,22 @@ class AbstractRepository(ABC):
 class SQLAlchemyRepository(AbstractRepository):
     model = None
 
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
     async def find_all(self):
-        async with async_session_maker() as session:
-            stmt = select(self.model)
-            res = await session.execute(stmt)
-            return res.all()
+        stmt = select(self.model)
+        res = await self.session.execute(stmt)
+        return res.all()
 
     async def get_by_id(self, pk: int) -> model:
-        async with async_session_maker() as session:
-            stmt = select(self.model).where(self.model.id == int)
-            res = await session.execute(stmt)
-            return res.scalar_one_or_none()
+        stmt = select(self.model).where(self.model.id == int)
+        res = await self.session.execute(stmt)
+        return res.scalar_one_or_none()
 
-    async def create(self, dto):
-        async with async_session_maker() as session:
-            obj = self.model(**dto.model_dump())
-            session.add(obj)
-            await session.commit()
-            await session.refresh(obj)
-            return obj
+    async def create(self, **kwargs):
+        obj = self.model(**kwargs)
+        self.session.add(obj)
+        await self.session.commit()
+        await self.session.refresh(obj)
+        return obj

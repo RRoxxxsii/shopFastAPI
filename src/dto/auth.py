@@ -1,6 +1,13 @@
 from pydantic import BaseModel, EmailStr
 
 
+class CreateUserDTO(BaseModel):
+    name: str
+    surname: str
+    email: EmailStr
+    password1: str
+
+
 class UserDTO(BaseModel):
     name: str
     surname: str

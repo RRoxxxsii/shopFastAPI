@@ -3,14 +3,14 @@ from starlette import status
 
 from src.exceptions.user import PasswordIsNotCorrect, UserExists, UserNotFound
 from src.routers.docs.auth import sign_up
-from src.routers.v1.dependencies import (create_token_service,
-                                         create_user_service)
 from src.routers.v1.requests.auth import LoginUserIn, RegisterUserIn
 from src.routers.v1.responses.auth import RegisterUserOut
 from src.services.user import CreateTokenService, CreateUserService
 
 router = APIRouter()
 
+create_token_service = lambda x: x
+create_user_service = lambda x: x
 
 @router.post('/create-token/', status_code=status.HTTP_201_CREATED)
 async def create_token(user_schema: LoginUserIn, service: CreateTokenService = Depends(create_token_service)):
