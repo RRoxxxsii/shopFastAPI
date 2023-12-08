@@ -16,7 +16,6 @@ class TestBecomePartnerExistsAccount:
             'an': '783768329692',
         }, headers={'Authorization': token})
 
-        print(response.content.decode())
         assert response.status_code == status.HTTP_201_CREATED
 
     async def test_become_partner_api_validation_failed(self, ac: AsyncClient, user, token):

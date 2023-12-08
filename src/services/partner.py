@@ -50,7 +50,7 @@ class CreateSellerUserExists(SellerUseCase):
                 raise SellerExists('Seller with this credentials already exists')
             if not await self.api_client.call(dto):
                 raise DataNotValid('Data you provided is not valid')
-            seller = await self.uow.partner_repo.create(dto=dto)
+            seller = await self.uow.partner_repo.create(**dto.model_dump())
             await self.uow.commit()
             return seller
 

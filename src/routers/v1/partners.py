@@ -1,5 +1,3 @@
-from typing import Union
-
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
@@ -10,7 +8,6 @@ from src.exceptions.user import UserExists
 from src.models.auth import User
 from src.routers.docs.partners import register_as_partner, upgrade_to_seller
 from src.routers.v1.dependencies import APIClientDep, UOWDep
-from src.routers.v1.requests.auth import RegisterUserIn
 from src.routers.v1.requests.partners import SellerIn, UserSellerIn
 from src.routers.v1.responses.partners import SellerOut
 from src.secure.user import get_current_user
