@@ -1,22 +1,26 @@
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
+from src.dto.auth import CreateUserDTO, AuthDTO
 from src.exceptions.user import PasswordIsNotCorrect, UserExists, UserNotFound
 from src.routers.docs.auth import sign_up
+from src.routers.v1.dependencies import UOWDep
 from src.routers.v1.requests.auth import LoginUserIn, RegisterUserIn
 from src.routers.v1.responses.auth import RegisterUserOut
 from src.services.user import CreateTokenService, CreateUserService
 
 router = APIRouter()
 
-create_token_service = lambda x: x
-create_user_service = lambda x: x
 
 @router.post('/create-token/', status_code=status.HTTP_201_CREATED)
-async def create_token(user_schema: LoginUserIn, service: CreateTokenService = Depends(create_token_service)):
+async def create_token(user_schema: LoginUserIn, uow: UOWDep):
+
+    service = CreateTokenService(uow)
+
+    user_dto = AuthDTO(**user_schema.model_dump())
 
     try:
-        token = await service.execute(dto=user_schema)
+        token = await service.execute(user_dto)
     except UserNotFound:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Not Found')
     except PasswordIsNotCorrect:
@@ -27,9 +31,11 @@ async def create_token(user_schema: LoginUserIn, service: CreateTokenService = D
 
 @router.post('/sign-up/', response_model=RegisterUserOut, status_code=status.HTTP_201_CREATED,
              responses=sign_up)
-async def register(user_schema: RegisterUserIn, service: CreateUserService = Depends(create_user_service)):
+async def register(user_schema: RegisterUserIn, uow: UOWDep):
+    service = CreateUserService(uow)
+    user_dto = CreateUserDTO(**user_schema.model_dump(exclude={'password2'}))
     try:
-        user = await service.execute(dto=user_schema)
+        user = await service.execute(user_dto)
     except UserExists:
         raise HTTPException(status.HTTP_409_CONFLICT, 'User with these credentials already exists')
     else:

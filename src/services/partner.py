@@ -2,8 +2,6 @@ from typing import Type
 
 from src.api.partners.client import AbstractAPIClient
 from src.database.uow import UnitOfWork
-from src.dto.auth import UserDTO
-from src.dto.partner import FullUserPartnerDTO, UserPartnerDTO
 from src.exceptions.partner import DataNotValid, SellerExists
 from src.exceptions.user import UserExists
 from src.models.partners import Seller

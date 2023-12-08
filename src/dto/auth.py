@@ -8,6 +8,11 @@ class CreateUserDTO(BaseModel):
     password1: str
 
 
+class AuthDTO(BaseModel):
+    email: str
+    password: str
+
+
 class UserDTO(BaseModel):
     name: str
     surname: str
