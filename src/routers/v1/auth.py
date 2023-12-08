@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from starlette import status
 
-from src.dto.auth import CreateUserDTO, AuthDTO
+from src.dto.auth import AuthDTO, CreateUserDTO
 from src.exceptions.user import PasswordIsNotCorrect, UserExists, UserNotFound
 from src.routers.docs.auth import sign_up
 from src.routers.v1.dependencies import UOWDep

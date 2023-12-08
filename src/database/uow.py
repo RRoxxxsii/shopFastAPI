@@ -1,7 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Type
-
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import async_session_maker
 from src.repositories.partner import PartnerRepository

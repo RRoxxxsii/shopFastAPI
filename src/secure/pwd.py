@@ -1,5 +1,3 @@
-from abc import ABC, abstractmethod
-
 from src.secure import pwd_context
 
 

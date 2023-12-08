@@ -1,7 +1,7 @@
-from typing import Type
-
 from src.api.partners.client import AbstractAPIClient
 from src.database.uow import UnitOfWork
+from src.dto.auth import CreateUserDTO
+from src.dto.partner import PartnerDTO, UserPartnerDTO
 from src.exceptions.partner import DataNotValid, SellerExists
 from src.exceptions.user import UserExists
 from src.models.partners import Seller
@@ -15,14 +15,14 @@ class BaseUseCase:
 
 
 class SellerUseCase(BaseUseCase):
-    def __init__(self, uow: UnitOfWork, api_client: Type[AbstractAPIClient]):
+    def __init__(self, uow: UnitOfWork, api_client: AbstractAPIClient):
         super().__init__(uow)
-        self.api_client: Type[AbstractAPIClient] = api_client
+        self.api_client: AbstractAPIClient = api_client
 
 
 class CreateSellerUserDoesNotExists(SellerUseCase):
 
-    async def __call__(self, partner_dto, user_dto) -> Seller:
+    async def __call__(self, partner_dto: PartnerDTO, user_dto: CreateUserDTO) -> Seller:
         async with self.uow:
             if await self.uow.user_repo.get_user_or_none(user_dto.email):
                 raise UserExists('User with this credentials already exists')
@@ -42,7 +42,7 @@ class CreateSellerUserDoesNotExists(SellerUseCase):
 
 class CreateSellerUserExists(SellerUseCase):
 
-    async def __call__(self, dto) -> Seller:
+    async def __call__(self, dto: UserPartnerDTO) -> Seller:
         async with self.uow:
             if await self.uow.partner_repo.get_partner_or_none(dto):
                 raise SellerExists('Seller with this credentials already exists')
@@ -56,16 +56,16 @@ class CreateSellerUserExists(SellerUseCase):
 class CreatePartnerUserExistsService:
     def __init__(
             self,
-            api_client: Type[AbstractAPIClient],
+            api_client: AbstractAPIClient,
             uow: UnitOfWork
     ):
-        self.api_client: Type[AbstractAPIClient] = api_client
+        self.api_client: AbstractAPIClient = api_client
         self.uow: UnitOfWork = uow
 
-    async def _create_seller(self, dto):
+    async def _create_seller(self, dto: UserPartnerDTO):
         return await CreateSellerUserExists(self.uow, self.api_client)(dto)
 
-    async def execute(self, dto) -> Seller:
+    async def execute(self, dto: UserPartnerDTO) -> Seller:
         seller = await self._create_seller(dto)
         return seller
 
@@ -73,15 +73,15 @@ class CreatePartnerUserExistsService:
 class CreatePartnerUserDoesNotExistsService:
     def __init__(
             self,
-            api_client: Type[AbstractAPIClient],
+            api_client: AbstractAPIClient,
             uow: UnitOfWork
     ):
-        self.api_client: Type[AbstractAPIClient] = api_client
+        self.api_client: AbstractAPIClient = api_client
         self.uow: UnitOfWork = uow
 
-    async def _create_seller(self, partner_dto, user_dto):
+    async def _create_seller(self, partner_dto: PartnerDTO, user_dto: CreateUserDTO):
         return await CreateSellerUserDoesNotExists(self.uow, self.api_client)(partner_dto, user_dto)
 
-    async def execute(self, partner_dto, user_dto) -> Seller:
+    async def execute(self, partner_dto: PartnerDTO, user_dto: CreateUserDTO) -> Seller:
         seller = await self._create_seller(partner_dto, user_dto)
         return seller

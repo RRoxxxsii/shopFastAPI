@@ -23,4 +23,3 @@ class UserPartnerDTO(PartnerDTO):
 
 class FullUserPartnerDTO(UserDTO, UserPartnerDTO):
     pass
-

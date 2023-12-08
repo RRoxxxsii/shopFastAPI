@@ -2,7 +2,6 @@ from abc import abstractmethod
 
 from sqlalchemy import or_, select
 
-from src.database import async_session_maker
 from src.models.partners import Seller
 from src.repositories.user import AbstractUserRepository, UserRepository
 
