@@ -4,7 +4,7 @@ from sqlalchemy.sql import func
 
 from src.database.base import AbstractModel
 
-from . import partners
+from . import partner
 
 
 class User(AbstractModel):
@@ -22,7 +22,7 @@ class User(AbstractModel):
     is_admin: Mapped[bool] = mapped_column(default=False)
     is_stuff: Mapped[bool] = mapped_column(default=False)
 
-    seller: Mapped['partners.Seller'] = relationship(back_populates='user', uselist=False)
+    seller: Mapped['partner.Partner'] = relationship(back_populates='user', uselist=False)
     tokens: Mapped['Token'] = relationship(back_populates='user')
 
 

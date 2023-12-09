@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 from src.routers.v1.requests.auth import RegisterUserIn
 
 
-class SellerIn(BaseModel):
+class PartnerIn(BaseModel):
     mobile: str
     company_name: str
     company_description: str
@@ -17,5 +17,5 @@ class SellerIn(BaseModel):
     additional: Optional[str] = None
 
 
-class UserSellerIn(SellerIn, RegisterUserIn):
+class UserPartnerIn(PartnerIn, RegisterUserIn):
     pass

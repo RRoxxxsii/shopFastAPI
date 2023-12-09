@@ -1,7 +1,7 @@
 from starlette import status
 
 # RESPONSES
-upgrade_to_seller = {
+upgrade_to_partner = {
     status.HTTP_409_CONFLICT:
     {
         "description": "Unique constraint failed (e.g. tin)",

@@ -1,7 +1,7 @@
 from src.exceptions.base import DomainException
 
 
-class SellerExists(DomainException):
+class PartnerExists(DomainException):
     pass
 
 

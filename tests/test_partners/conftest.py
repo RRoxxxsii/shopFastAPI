@@ -2,7 +2,7 @@ import aiohttp
 import pytest
 
 from src.models.auth import User
-from src.models.partners import Seller
+from src.models.partner import Partner
 from tests.conftest import async_session_maker, hash_pwd
 
 
@@ -19,7 +19,7 @@ async def seller():
             name='name', surname='surname', email='email@gmail.com', hashed_password=hash_pwd()
         )
 
-        seller = Seller(
+        seller = Partner(
             user=user, mobile='88005553535', company_name='Name', company_description='Description',
             bank_name='Sber', tin='381111467850', bic='044525225', trrc='775001001', an='783768329692'
         )

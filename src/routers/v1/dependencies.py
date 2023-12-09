@@ -20,14 +20,14 @@ def create_user_service(uow: AbstractUnitOfWork = Depends(get_sqlalchemy_uow)):
     return CreateUserService(uow)
 
 
-def create_seller_user_does_not_exist_service(
+def create_partner_user_does_not_exist_service(
         uow: AbstractUnitOfWork = Depends(get_sqlalchemy_uow),
         api_client: AbstractAPIClient = Depends(Client)
 ):
     return CreatePartnerUserDoesNotExistsService(api_client, uow)
 
 
-def create_seller_user_exists_service(
+def create_partner_user_exists_service(
         uow: AbstractUnitOfWork = Depends(get_sqlalchemy_uow),
         api_client: AbstractAPIClient = Depends(Client)
 ):

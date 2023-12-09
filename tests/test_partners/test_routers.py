@@ -5,7 +5,7 @@ from starlette import status
 class TestBecomePartnerExistsAccount:
 
     async def test_become_partner(self, ac: AsyncClient, user, token):
-        response = await ac.post('/partners/upgrade-to-seller/', json={
+        response = await ac.post('/partners/upgrade-to-partner/', json={
             'bic': '044525225',
             'tin': '381111467850',
             'trrc': '775001001',
@@ -22,7 +22,7 @@ class TestBecomePartnerExistsAccount:
         """
         Credentials validation through API failed.
         """
-        response = await ac.post('/partners/upgrade-to-seller/', json={
+        response = await ac.post('/partners/upgrade-to-partner/', json={
             'bic': '0',
             'tin': '0',
             'trrc': '0',
@@ -38,7 +38,7 @@ class TestBecomePartnerExistsAccount:
         """
         Credentials are not unique
         """
-        response = await ac.post('/partners/upgrade-to-seller/', json={
+        response = await ac.post('/partners/upgrade-to-partner/', json={
             'bic': '044525225',
             'tin': '381111467850',
             'trrc': '775001001',

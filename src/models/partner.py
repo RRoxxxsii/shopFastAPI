@@ -7,7 +7,7 @@ from src.database.base import AbstractModel
 from . import auth
 
 
-class Seller(AbstractModel):
+class Partner(AbstractModel):
     __tablename__ = 'sellers'
 
     user: Mapped['auth.User'] = relationship(back_populates='seller', uselist=False)
@@ -30,4 +30,4 @@ class Seller(AbstractModel):
     is_approved: Mapped[bool] = mapped_column(default=False)
 
     def __repr__(self):
-        return f'User<{self.user_id}> Seller<{self.id}>'
+        return f'User<{self.user_id}> Partner<{self.id}>'
