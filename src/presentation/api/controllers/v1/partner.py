@@ -5,15 +5,18 @@ from src.domain.shop.dto.auth import CreateUserDTO
 from src.domain.shop.dto.partner import PartnerDTO, UserPartnerDTO
 from src.domain.shop.exceptions.partner import DataNotValid, PartnerExists
 from src.domain.shop.exceptions.user import UserExists
+from src.domain.shop.services.partner import (
+    CreatePartnerUserDoesNotExistsService, CreatePartnerUserExistsService)
 from src.infrastructure.database.models.auth import User
-from src.presentation.api.controllers.docs.partners import register_as_partner, upgrade_to_partner
-from src.presentation.api.di.services import create_partner_user_does_not_exist_service, \
-    create_partner_user_exists_service
-from src.presentation.api.controllers.v1.requests.partners import PartnerIn, UserPartnerIn
-from src.presentation.api.controllers.v1.responses.partners import PartnerOut
 from src.infrastructure.secure.user import get_current_user
-from src.domain.shop.services.partner import (CreatePartnerUserDoesNotExistsService,
-                                              CreatePartnerUserExistsService)
+from src.presentation.api.controllers.docs.partners import (
+    register_as_partner, upgrade_to_partner)
+from src.presentation.api.controllers.v1.requests.partners import (
+    PartnerIn, UserPartnerIn)
+from src.presentation.api.controllers.v1.responses.partners import PartnerOut
+from src.presentation.api.di.services import (
+    create_partner_user_does_not_exist_service,
+    create_partner_user_exists_service)
 
 router = APIRouter()
 

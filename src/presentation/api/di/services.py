@@ -1,8 +1,10 @@
 from fastapi import Depends
 
-from src.domain.shop.services.partner import CreatePartnerUserDoesNotExistsService, CreatePartnerUserExistsService
+from src.domain.shop.services.partner import (
+    CreatePartnerUserDoesNotExistsService, CreatePartnerUserExistsService)
 from src.domain.shop.services.user import CreateTokenService, CreateUserService
-from src.infrastructure.api_client.partners.client import AbstractAPIClient, Client
+from src.infrastructure.api_client.partners.client import (AbstractAPIClient,
+                                                           Client)
 from src.infrastructure.database.uow import AbstractUnitOfWork
 from src.presentation.api.di.database import get_sqlalchemy_uow
 

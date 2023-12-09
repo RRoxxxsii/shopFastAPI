@@ -1,9 +1,10 @@
 import uuid
 
-from src.domain.shop.dto.auth import CreateUserDTO, AuthDTO
-from src.domain.shop.exceptions.user import UserExists, UserNotFound, PasswordIsNotCorrect
-from src.domain.shop.usecases.user.base import UserUseCase, TokenUseCase
-from src.infrastructure.database.models.auth import User, Token
+from src.domain.shop.dto.auth import AuthDTO, CreateUserDTO
+from src.domain.shop.exceptions.user import (PasswordIsNotCorrect, UserExists,
+                                             UserNotFound)
+from src.domain.shop.usecases.user.base import TokenUseCase, UserUseCase
+from src.infrastructure.database.models.auth import Token, User
 from src.infrastructure.secure.pwd import check_password
 
 

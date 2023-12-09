@@ -52,3 +52,4 @@ parse
 passlib
 aiohttp
 requests
+pre-commit

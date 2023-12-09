@@ -1,6 +1,6 @@
-from src.infrastructure.database.uow import AbstractUnitOfWork
 from src.domain.shop.dto.auth import AuthDTO, CreateUserDTO
-from src.domain.shop.usecases.user.usecases import CreateUser, CreateToken
+from src.domain.shop.usecases.user.usecases import CreateToken, CreateUser
+from src.infrastructure.database.uow import AbstractUnitOfWork
 
 
 class CreateUserService:

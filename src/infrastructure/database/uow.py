@@ -1,14 +1,14 @@
 from abc import ABC, abstractmethod
 
-from src.infrastructure.database.repositories.partner import PartnerRepository
-from src.infrastructure.database.repositories.token import TokenRepository
-from src.infrastructure.database.repositories.user import UserRepository
+from src.infrastructure.database.repositories import (
+    AbstractPartnerRepository, AbstractTokenRepository, AbstractUserRepository,
+    PartnerRepository, TokenRepository, UserRepository)
 
 
 class AbstractUnitOfWork(ABC):
-    user_repo: UserRepository
-    partner_repo: PartnerRepository
-    token_repo: TokenRepository
+    user_repo: AbstractUserRepository
+    partner_repo: AbstractPartnerRepository
+    token_repo: AbstractTokenRepository
 
     @abstractmethod
     def __init__(self):

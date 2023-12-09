@@ -2,12 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
 from src.domain.shop.dto.auth import AuthDTO, CreateUserDTO
-from src.domain.shop.exceptions.user import PasswordIsNotCorrect, UserExists, UserNotFound
-from src.presentation.api.controllers.docs.auth import sign_up
-from src.presentation.api.di.services import create_token_service, create_user_service
-from src.presentation.api.controllers.v1.requests.auth import LoginUserIn, RegisterUserIn
-from src.presentation.api.controllers.v1.responses.auth import RegisterUserOut
+from src.domain.shop.exceptions.user import (PasswordIsNotCorrect, UserExists,
+                                             UserNotFound)
 from src.domain.shop.services.user import CreateTokenService, CreateUserService
+from src.presentation.api.controllers.docs.auth import sign_up
+from src.presentation.api.controllers.v1.requests.auth import (LoginUserIn,
+                                                               RegisterUserIn)
+from src.presentation.api.controllers.v1.responses.auth import RegisterUserOut
+from src.presentation.api.di.services import (create_token_service,
+                                              create_user_service)
 
 router = APIRouter()
 

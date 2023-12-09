@@ -1,9 +1,10 @@
-from src.infrastructure.api_client.partners.client import AbstractAPIClient
-from src.infrastructure.database.uow import AbstractUnitOfWork
 from src.domain.shop.dto.auth import CreateUserDTO
 from src.domain.shop.dto.partner import PartnerDTO, UserPartnerDTO
-from src.domain.shop.usecases.partner.usecases import CreatePartnerUserDoesNotExists, CreatePartnerUserExists
+from src.domain.shop.usecases.partner.usecases import (
+    CreatePartnerUserDoesNotExists, CreatePartnerUserExists)
+from src.infrastructure.api_client.partners.client import AbstractAPIClient
 from src.infrastructure.database.models.partner import Partner
+from src.infrastructure.database.uow import AbstractUnitOfWork
 
 
 class CreatePartnerUserExistsService:

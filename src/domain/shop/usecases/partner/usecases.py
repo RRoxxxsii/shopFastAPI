@@ -1,6 +1,6 @@
 from src.domain.shop.dto.auth import CreateUserDTO
 from src.domain.shop.dto.partner import PartnerDTO, UserPartnerDTO
-from src.domain.shop.exceptions.partner import PartnerExists, DataNotValid
+from src.domain.shop.exceptions.partner import DataNotValid, PartnerExists
 from src.domain.shop.exceptions.user import UserExists
 from src.domain.shop.usecases.partner.base import PartnerUseCase
 from src.infrastructure.database.models.partner import Partner
