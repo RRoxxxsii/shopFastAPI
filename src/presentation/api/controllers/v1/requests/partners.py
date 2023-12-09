@@ -1,5 +1,3 @@
-from typing import Optional
-
 from pydantic import BaseModel, Field
 
 from src.presentation.api.controllers.v1.requests.auth import RegisterUserIn
@@ -14,7 +12,7 @@ class PartnerIn(BaseModel):
     bic: str
     trrc: str
     an: str
-    additional: Optional[str] = None
+    additional: str | None = None
 
 
 class UserPartnerIn(PartnerIn, RegisterUserIn):

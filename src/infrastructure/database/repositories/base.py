@@ -3,9 +3,10 @@ from abc import ABC, abstractmethod
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.infrastructure.database.base import AbstractModel
+
 
 class AbstractRepository(ABC):
-
     @abstractmethod
     def __init__(self):
         raise NotImplementedError
@@ -19,12 +20,12 @@ class AbstractRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def create(self, dto):
+    async def create(self, **kwargs):
         raise NotImplementedError
 
 
 class SQLAlchemyRepository(AbstractRepository):
-    model = None
+    model: type[AbstractModel]
 
     def __init__(self, session: AsyncSession):
         self.session = session
@@ -34,7 +35,7 @@ class SQLAlchemyRepository(AbstractRepository):
         res = await self.session.execute(stmt)
         return res.all()
 
-    async def get_by_id(self, pk: int) -> model:
+    async def get_by_id(self, pk: int) -> type[AbstractModel] | None:
         stmt = select(self.model).where(self.model.id == int)
         res = await self.session.execute(stmt)
         return res.scalar_one_or_none()

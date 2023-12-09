@@ -1,8 +1,13 @@
 from abc import ABC, abstractmethod
 
 from src.infrastructure.database.repositories import (
-    AbstractPartnerRepository, AbstractTokenRepository, AbstractUserRepository,
-    PartnerRepository, TokenRepository, UserRepository)
+    AbstractPartnerRepository,
+    AbstractTokenRepository,
+    AbstractUserRepository,
+    PartnerRepository,
+    TokenRepository,
+    UserRepository,
+)
 
 
 class AbstractUnitOfWork(ABC):

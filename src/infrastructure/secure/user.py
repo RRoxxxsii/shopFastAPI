@@ -11,10 +11,9 @@ from src.infrastructure.secure import apikey_scheme
 
 
 async def get_current_user(
-        access_token: Annotated[str, Depends(apikey_scheme)],
-        session: AsyncSession = Depends(get_async_session)
+    access_token: Annotated[str, Depends(apikey_scheme)],
+    session: AsyncSession = Depends(get_async_session),
 ) -> User | None:
-
     stmt = select(Token).where(Token.access_token == access_token).options(selectinload(Token.user))
     token = await session.execute(stmt)
 

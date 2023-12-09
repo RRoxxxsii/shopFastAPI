@@ -1,10 +1,10 @@
 from sqlalchemy import or_, select
 
 from src.infrastructure.database.models.partner import Partner
-from src.infrastructure.database.repositories.partner.interface import \
-    AbstractPartnerRepository
-from src.infrastructure.database.repositories.user.implementation import \
-    UserRepository
+from src.infrastructure.database.repositories.partner.interface import (
+    AbstractPartnerRepository,
+)
+from src.infrastructure.database.repositories.user.implementation import UserRepository
 
 
 class PartnerRepository(AbstractPartnerRepository, UserRepository):
@@ -16,7 +16,8 @@ class PartnerRepository(AbstractPartnerRepository, UserRepository):
                 Partner.tin == dto.tin,
                 Partner.an == dto.an,
                 Partner.company_name == dto.company_name,
-                Partner.mobile == dto.mobile)
+                Partner.mobile == dto.mobile,
+            )
         )
         result = await self.session.execute(stmt)
         partner = result.scalar_one_or_none()

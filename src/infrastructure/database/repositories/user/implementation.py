@@ -2,8 +2,9 @@ from sqlalchemy import select
 
 from src.infrastructure.database.models.auth import User
 from src.infrastructure.database.repositories.base import SQLAlchemyRepository
-from src.infrastructure.database.repositories.user.interface import \
-    AbstractUserRepository
+from src.infrastructure.database.repositories.user.interface import (
+    AbstractUserRepository,
+)
 
 
 class UserRepository(AbstractUserRepository, SQLAlchemyRepository):

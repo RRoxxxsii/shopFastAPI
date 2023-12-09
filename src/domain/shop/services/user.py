@@ -4,7 +4,6 @@ from src.infrastructure.database.uow import AbstractUnitOfWork
 
 
 class CreateUserService:
-
     def __init__(self, uow: AbstractUnitOfWork):
         self.uow: AbstractUnitOfWork = uow
 
@@ -16,7 +15,6 @@ class CreateUserService:
 
 
 class CreateTokenService:
-
     def __init__(self, uow: AbstractUnitOfWork):
         self.uow: AbstractUnitOfWork = uow
 

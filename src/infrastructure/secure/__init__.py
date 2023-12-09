@@ -3,4 +3,4 @@ from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-apikey_scheme = APIKeyHeader(name='Authorization')
+apikey_scheme = APIKeyHeader(name="Authorization")

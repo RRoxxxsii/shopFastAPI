@@ -1,17 +1,15 @@
 import asyncio
 import uuid
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
 
 import pytest
 from fastapi.testclient import TestClient
 from httpx import AsyncClient
 from sqlalchemy import NullPool
-from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
-                                    create_async_engine)
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 import src.infrastructure.database.base
-from src.infrastructure.database import (DATABASE_URL, get_async_session,
-                                         metadata)
+from src.infrastructure.database import DATABASE_URL, get_async_session, metadata
 from src.infrastructure.database.models.auth import Token, User
 from src.infrastructure.secure import pwd_context
 from src.main import app
@@ -39,7 +37,7 @@ async def start_db():
     await engine_test.dispose()
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def event_loop(request):
     """Create an instance of the default event loop for each test case."""
     loop = asyncio.get_event_loop_policy().new_event_loop()
@@ -56,14 +54,19 @@ async def ac() -> AsyncGenerator[AsyncClient, None]:
         yield ac
 
 
-def hash_pwd(pwd: str = 'hashed+12345') -> str:
+def hash_pwd(pwd: str = "hashed+12345") -> str:
     return pwd_context.hash(pwd)
 
 
 @pytest.fixture
 async def user():
     async with async_session_maker() as session:
-        user = User(name='name', surname='surname', email='testuser@example.com', hashed_password=hash_pwd())
+        user = User(
+            name="name",
+            surname="surname",
+            email="testuser@example.com",
+            hashed_password=hash_pwd(),
+        )
         session.add(user)
         await session.commit()
     return user

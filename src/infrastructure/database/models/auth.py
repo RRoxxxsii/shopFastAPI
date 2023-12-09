@@ -8,7 +8,7 @@ from . import partner
 
 
 class User(AbstractModel):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     name: Mapped[str] = mapped_column(String(50), nullable=False)
     surname: Mapped[str] = mapped_column(String(50), nullable=False)
@@ -22,15 +22,15 @@ class User(AbstractModel):
     is_admin: Mapped[bool] = mapped_column(default=False)
     is_stuff: Mapped[bool] = mapped_column(default=False)
 
-    seller: Mapped['partner.Partner'] = relationship(back_populates='user', uselist=False)
-    tokens: Mapped['Token'] = relationship(back_populates='user')
+    seller: Mapped["partner.Partner"] = relationship(back_populates="user", uselist=False)
+    tokens: Mapped["Token"] = relationship(back_populates="user")
 
 
 class Token(AbstractModel):
-    __tablename__ = 'tokens'
+    __tablename__ = "tokens"
 
-    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
-    user: Mapped['User'] = relationship(back_populates='tokens')
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user: Mapped["User"] = relationship(back_populates="tokens")
 
     access_token: Mapped[str] = mapped_column(unique=True, index=True)
     time_created = mapped_column(DateTime(timezone=True), server_default=func.now())

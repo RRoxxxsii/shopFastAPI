@@ -1,5 +1,3 @@
-from typing import Optional
-
 from pydantic import BaseModel, Field
 
 from src.domain.shop.dto.auth import UserDTO
@@ -14,7 +12,7 @@ class PartnerDTO(BaseModel):
     bic: str
     trrc: str
     an: str
-    additional: Optional[str] = None
+    additional: str | None = None
 
 
 class UserPartnerDTO(PartnerDTO):
