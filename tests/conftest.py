@@ -9,11 +9,11 @@ from sqlalchemy import NullPool
 from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
                                     create_async_engine)
 
-import src.database.base
-from src.database import DATABASE_URL, get_async_session, metadata
+import src.infrastructure.database.base
+from src.infrastructure.database import DATABASE_URL, get_async_session, metadata
 from src.main import app
-from src.models.auth import Token, User
-from src.secure import pwd_context
+from src.infrastructure.database.models.auth import Token, User
+from src.infrastructure.secure import pwd_context
 
 engine_test = create_async_engine(DATABASE_URL, poolclass=NullPool)
 async_session_maker = async_sessionmaker(engine_test, expire_on_commit=False)
@@ -31,8 +31,8 @@ app.dependency_overrides[get_async_session] = override_get_async_session
 @pytest.fixture(autouse=True)
 async def start_db():
     async with engine_test.begin() as conn:
-        await conn.run_sync(src.database.base.AbstractModel.metadata.drop_all)
-        await conn.run_sync(src.database.base.AbstractModel.metadata.create_all)
+        await conn.run_sync(src.infrastructure.database.base.AbstractModel.metadata.drop_all)
+        await conn.run_sync(src.infrastructure.database.base.AbstractModel.metadata.create_all)
     # for AsyncEngine created in function scope, close and
     # clean-up pooled connections
     await engine_test.dispose()

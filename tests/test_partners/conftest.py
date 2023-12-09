@@ -1,8 +1,8 @@
 import aiohttp
 import pytest
 
-from src.models.auth import User
-from src.models.partner import Partner
+from src.infrastructure.database.models.auth import User
+from src.infrastructure.database.models.partner import Partner
 from tests.conftest import async_session_maker, hash_pwd
 
 
