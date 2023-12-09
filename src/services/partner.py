@@ -1,5 +1,5 @@
 from src.api.partners.client import AbstractAPIClient
-from src.database.uow import UnitOfWork
+from src.database.uow import AbstractUnitOfWork
 from src.dto.auth import CreateUserDTO
 from src.dto.partner import PartnerDTO, UserPartnerDTO
 from src.exceptions.partner import DataNotValid, SellerExists
@@ -10,12 +10,12 @@ from src.secure.pwd import hash_password
 
 class BaseUseCase:
 
-    def __init__(self, uow: UnitOfWork) -> None:
-        self.uow: UnitOfWork = uow
+    def __init__(self, uow: AbstractUnitOfWork) -> None:
+        self.uow: AbstractUnitOfWork = uow
 
 
 class SellerUseCase(BaseUseCase):
-    def __init__(self, uow: UnitOfWork, api_client: AbstractAPIClient):
+    def __init__(self, uow: AbstractUnitOfWork, api_client: AbstractAPIClient):
         super().__init__(uow)
         self.api_client: AbstractAPIClient = api_client
 
@@ -57,10 +57,10 @@ class CreatePartnerUserExistsService:
     def __init__(
             self,
             api_client: AbstractAPIClient,
-            uow: UnitOfWork
+            uow: AbstractUnitOfWork
     ):
         self.api_client: AbstractAPIClient = api_client
-        self.uow: UnitOfWork = uow
+        self.uow: AbstractUnitOfWork = uow
 
     async def _create_seller(self, dto: UserPartnerDTO):
         return await CreateSellerUserExists(self.uow, self.api_client)(dto)
@@ -74,10 +74,10 @@ class CreatePartnerUserDoesNotExistsService:
     def __init__(
             self,
             api_client: AbstractAPIClient,
-            uow: UnitOfWork
+            uow: AbstractUnitOfWork
     ):
         self.api_client: AbstractAPIClient = api_client
-        self.uow: UnitOfWork = uow
+        self.uow: AbstractUnitOfWork = uow
 
     async def _create_seller(self, partner_dto: PartnerDTO, user_dto: CreateUserDTO):
         return await CreateSellerUserDoesNotExists(self.uow, self.api_client)(partner_dto, user_dto)

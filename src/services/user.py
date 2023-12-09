@@ -1,6 +1,6 @@
 import uuid
 
-from src.database.uow import UnitOfWork
+from src.database.uow import AbstractUnitOfWork
 from src.dto.auth import AuthDTO, CreateUserDTO
 from src.exceptions.user import PasswordIsNotCorrect, UserExists, UserNotFound
 from src.models.auth import Token, User
@@ -9,19 +9,19 @@ from src.secure.pwd import check_password
 
 class BaseUseCase:
 
-    def __init__(self, uow: UnitOfWork) -> None:
-        self.uow: UnitOfWork = uow
+    def __init__(self, uow: AbstractUnitOfWork) -> None:
+        self.uow: AbstractUnitOfWork = uow
 
 
 class UserUseCase(BaseUseCase):
 
-    def __init__(self, uow: UnitOfWork) -> None:
+    def __init__(self, uow: AbstractUnitOfWork) -> None:
         super().__init__(uow)
 
 
 class TokenUseCase(BaseUseCase):
 
-    def __init__(self, uow: UnitOfWork) -> None:
+    def __init__(self, uow: AbstractUnitOfWork) -> None:
         super().__init__(uow)
 
 
@@ -55,8 +55,8 @@ class CreateToken(TokenUseCase):
 
 class CreateUserService:
 
-    def __init__(self, uow: UnitOfWork):
-        self.uow = uow
+    def __init__(self, uow: AbstractUnitOfWork):
+        self.uow: AbstractUnitOfWork = uow
 
     async def _create_user(self, user_dto: CreateUserDTO):
         return await CreateUser(self.uow)(user_dto)
@@ -67,8 +67,8 @@ class CreateUserService:
 
 class CreateTokenService:
 
-    def __init__(self, uow: UnitOfWork):
-        self.uow = uow
+    def __init__(self, uow: AbstractUnitOfWork):
+        self.uow: AbstractUnitOfWork = uow
 
     async def _create_token(self, user_dto: AuthDTO):
         return await CreateToken(self.uow)(user_dto)

@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-from src.database import async_session_maker
 from src.repositories.partner import PartnerRepository
 from src.repositories.token import TokenRepository
 from src.repositories.user import UserRepository
@@ -33,8 +32,8 @@ class AbstractUnitOfWork(ABC):
 
 
 class UnitOfWork(AbstractUnitOfWork):
-    def __init__(self):
-        self.session_factory = async_session_maker
+    def __init__(self, session):
+        self.session_factory = session
 
     async def __aenter__(self):
         self.session = self.session_factory()

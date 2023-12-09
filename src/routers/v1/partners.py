@@ -7,7 +7,9 @@ from src.exceptions.partner import DataNotValid, SellerExists
 from src.exceptions.user import UserExists
 from src.models.auth import User
 from src.routers.docs.partners import register_as_partner, upgrade_to_seller
-from src.routers.v1.dependencies import APIClientDep, UOWDep
+from src.routers.v1.dependencies import (
+    create_seller_user_does_not_exist_service,
+    create_seller_user_exists_service)
 from src.routers.v1.requests.partners import SellerIn, UserSellerIn
 from src.routers.v1.responses.partners import SellerOut
 from src.secure.user import get_current_user
@@ -21,10 +23,8 @@ router = APIRouter()
              responses=register_as_partner)
 async def register_as_partner(
         seller_schema: UserSellerIn,
-        api_client: APIClientDep,
-        uow: UOWDep,
+        service: CreatePartnerUserDoesNotExistsService = Depends(create_seller_user_does_not_exist_service)
 ):
-    service = CreatePartnerUserDoesNotExistsService(api_client, uow)
     partner_dto = PartnerDTO(
         **seller_schema.model_dump(exclude={'password1', 'password2', 'name', 'surname', 'email'}
                                    ))
@@ -46,15 +46,13 @@ async def register_as_partner(
              responses=upgrade_to_seller)
 async def become_partner_exist_account(
         seller_schema: SellerIn,
-        api_client: APIClientDep,
-        uow: UOWDep,
+        service: CreatePartnerUserExistsService = Depends(create_seller_user_exists_service),
         user: User = Depends(get_current_user),
 
 ):
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='UNAUTHORIZED')
 
-    service = CreatePartnerUserExistsService(uow=uow, api_client=api_client)
     try:
         seller = await service.execute(UserPartnerDTO(**seller_schema.model_dump(), user_id=user.id))
     except SellerExists:
