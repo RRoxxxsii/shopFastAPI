@@ -8,9 +8,9 @@ from . import auth
 
 
 class Partner(AbstractModel):
-    __tablename__ = "sellers"
+    __tablename__ = "partners"
 
-    user: Mapped["auth.User"] = relationship(back_populates="seller", uselist=False)
+    user: Mapped["auth.User"] = relationship(back_populates="partner", uselist=False)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
     mobile: Mapped[str] = mapped_column(String(30), unique=True, nullable=False)
