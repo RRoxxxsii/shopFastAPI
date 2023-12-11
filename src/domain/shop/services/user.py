@@ -1,4 +1,4 @@
-from src.domain.shop.dto.auth import AuthDTO, CreateUserDTO
+from src.domain.shop.dto.auth import AuthDTO, UserDTO
 from src.domain.shop.usecases.user.usecases import CreateToken, CreateUser
 from src.infrastructure.database.uow import AbstractUnitOfWork
 
@@ -7,10 +7,10 @@ class CreateUserService:
     def __init__(self, uow: AbstractUnitOfWork):
         self.uow: AbstractUnitOfWork = uow
 
-    async def _create_user(self, user_dto: CreateUserDTO):
+    async def _create_user(self, user_dto: UserDTO):
         return await CreateUser(self.uow)(user_dto)
 
-    async def execute(self, user_dto: CreateUserDTO):
+    async def execute(self, user_dto: UserDTO):
         return await self._create_user(user_dto)
 
 

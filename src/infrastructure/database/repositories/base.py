@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from decimal import Decimal
+from typing import Any
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -36,7 +38,7 @@ class SQLAlchemyRepository(AbstractRepository):
         return res.all()
 
     async def get_by_id(self, pk: int) -> type[AbstractModel] | None:
-        stmt = select(self.model).where(self.model.id == int)
+        stmt = select(self.model).where(self.model.id == pk)
         res = await self.session.execute(stmt)
         return res.scalar_one_or_none()
 

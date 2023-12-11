@@ -66,9 +66,11 @@ async def user():
             surname="surname",
             email="testuser@example.com",
             hashed_password=hash_pwd(),
+            is_partner=True,
         )
         session.add(user)
         await session.commit()
+        await session.refresh(user)
     return user
 
 

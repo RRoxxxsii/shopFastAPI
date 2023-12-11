@@ -5,6 +5,7 @@ from sqlalchemy.sql import func
 from src.infrastructure.database.base import AbstractModel
 
 from . import partner
+from .base import time_created
 
 
 class User(AbstractModel):
@@ -15,14 +16,14 @@ class User(AbstractModel):
     email: Mapped[str] = mapped_column(String(70), unique=True, index=True, nullable=False)
     hashed_password: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    time_created = mapped_column(DateTime(timezone=True), server_default=func.now())
+    time_created: Mapped[time_created]
 
     email_confirmed: Mapped[bool] = mapped_column(Boolean, default=False)
-    is_seller: Mapped[bool] = mapped_column(default=False)
+    is_partner: Mapped[bool] = mapped_column(default=False)
     is_admin: Mapped[bool] = mapped_column(default=False)
     is_stuff: Mapped[bool] = mapped_column(default=False)
 
-    seller: Mapped["partner.Partner"] = relationship(back_populates="user", uselist=False)
+    partner: Mapped["partner.Partner"] = relationship(back_populates="user", uselist=False, lazy='selectin')
     tokens: Mapped["Token"] = relationship(back_populates="user")
 
 

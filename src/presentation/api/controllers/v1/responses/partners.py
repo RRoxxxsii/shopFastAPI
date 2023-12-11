@@ -1,4 +1,7 @@
-from pydantic import BaseModel, Field
+import datetime
+from decimal import Decimal
+
+from pydantic import BaseModel, Field, Json
 
 from src.presentation.api.controllers.v1.responses.auth import RegisterUserOut
 
@@ -19,3 +22,17 @@ class PartnerOut(BaseModel):
 
 class UserPartnerOut(PartnerOut, RegisterUserOut):
     pass
+
+
+class ItemOut(BaseModel):
+    id: int
+    title: str
+    description: str
+    price: Decimal
+    data: Json
+    # images: list[ImageDTO]
+
+    category_id: int
+    partner_id: int
+    time_created: datetime.datetime
+

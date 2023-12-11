@@ -1,14 +1,19 @@
-from src.domain.shop.dto.auth import CreateUserDTO
+from src.domain.shop.dto.auth import UserDTO
+from src.domain.shop.dto.item import ItemDTO
 from src.domain.shop.dto.partner import PartnerDTO, UserPartnerDTO
+from src.domain.shop.exceptions.category import CategoryDoesNotExist, CategoryDataDoesNotMatch
+from src.domain.shop.exceptions.item import ItemExists
 from src.domain.shop.exceptions.partner import DataNotValid, PartnerExists
 from src.domain.shop.exceptions.user import UserExists
+from src.domain.shop.usecases.base import BaseExtendedUseCase
 from src.domain.shop.usecases.partner.base import PartnerUseCase
+from src.infrastructure.database.models.item import Item
 from src.infrastructure.database.models.partner import Partner
 from src.infrastructure.secure.pwd import hash_password
 
 
 class CreatePartnerUserDoesNotExists(PartnerUseCase):
-    async def __call__(self, partner_dto: PartnerDTO, user_dto: CreateUserDTO) -> Partner:
+    async def __call__(self, partner_dto: PartnerDTO, user_dto: UserDTO) -> Partner:
         async with self.uow:
             if await self.uow.user_repo.get_user_or_none(user_dto.email):
                 raise UserExists("User with this credentials already exists")
@@ -37,3 +42,21 @@ class CreatePartnerUserExists(PartnerUseCase):
             partner = await self.uow.partner_repo.create(**dto.model_dump())
             await self.uow.commit()
             return partner
+
+
+class CreateItem(BaseExtendedUseCase):
+
+    async def __call__(self, dto: ItemDTO) -> Item:
+        async with self.uow:
+            item = await self.uow.item_repo.get_item_or_none(dto)
+            if item:
+                raise ItemExists('Item with a field from your request already exists')
+            category = await self.uow.category_repo.get_by_id(pk=dto.category_id)
+            if not category:
+                raise CategoryDoesNotExist('Can not find is not valid')
+            if category.data.keys() == dto.data.keys():
+                item = await self.uow.item_repo.create(**dto.model_dump())
+            else:
+                raise CategoryDataDoesNotMatch('Data from your input does not match the category')
+            await self.uow.commit()
+            return item

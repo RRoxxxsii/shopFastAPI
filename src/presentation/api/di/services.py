@@ -2,7 +2,7 @@ from fastapi import Depends
 
 from src.domain.shop.services.partner import (
     CreatePartnerUserDoesNotExistsService,
-    CreatePartnerUserExistsService,
+    CreatePartnerUserExistsService, CreateItemService,
 )
 from src.domain.shop.services.user import CreateTokenService, CreateUserService
 from src.infrastructure.api_client.partners.client import AbstractAPIClient, Client
@@ -16,6 +16,10 @@ def create_token_service(uow: AbstractUnitOfWork = Depends(get_sqlalchemy_uow)):
 
 def create_user_service(uow: AbstractUnitOfWork = Depends(get_sqlalchemy_uow)):
     return CreateUserService(uow)
+
+
+def create_item_service(uow: AbstractUnitOfWork = Depends(get_sqlalchemy_uow)):
+    return CreateItemService(uow)
 
 
 def create_partner_user_does_not_exist_service(

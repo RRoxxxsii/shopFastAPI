@@ -1,4 +1,6 @@
-from pydantic import BaseModel, Field
+from decimal import Decimal
+
+from pydantic import BaseModel, Field, Json
 
 from src.presentation.api.controllers.v1.requests.auth import RegisterUserIn
 
@@ -17,3 +19,14 @@ class PartnerIn(BaseModel):
 
 class UserPartnerIn(PartnerIn, RegisterUserIn):
     pass
+
+
+class ItemIn(BaseModel):
+    title: str
+    description: str
+    price: Decimal
+    data: Json
+    # images: list[ImageDTO]
+
+    category_id: int
+

@@ -7,6 +7,8 @@ from src.infrastructure.database.repositories import (
     PartnerRepository,
     TokenRepository,
     UserRepository,
+    CategoryRepository,
+    AbstractCategoryRepository, AbstractItemRepository, ItemRepository
 )
 
 
@@ -14,6 +16,8 @@ class AbstractUnitOfWork(ABC):
     user_repo: AbstractUserRepository
     partner_repo: AbstractPartnerRepository
     token_repo: AbstractTokenRepository
+    category_repo: AbstractCategoryRepository
+    item_repo: AbstractItemRepository
 
     @abstractmethod
     def __init__(self):
@@ -46,6 +50,8 @@ class UnitOfWork(AbstractUnitOfWork):
         self.user_repo = UserRepository(self.session)
         self.partner_repo = PartnerRepository(self.session)
         self.token_repo = TokenRepository(self.session)
+        self.category_repo = CategoryRepository(self.session)
+        self.item_repo = ItemRepository(self.session)
 
     async def __aexit__(self, *args):
         await self.rollback()

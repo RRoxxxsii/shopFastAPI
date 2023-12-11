@@ -1,3 +1,5 @@
+import json
+
 from httpx import AsyncClient
 from starlette import status
 
@@ -41,7 +43,7 @@ class TestBecomePartnerExistsAccount:
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    async def test_become_partner_credentials_exist(self, ac: AsyncClient, user, token, seller):
+    async def test_become_partner_credentials_exist(self, ac: AsyncClient, user, token, partner):
         """
         Credentials are not unique
         """
@@ -115,7 +117,7 @@ class TestRegisterAsPartner:
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    async def test_become_partner_credentials_exist(self, ac: AsyncClient, user, token, seller):
+    async def test_become_partner_credentials_exist(self, ac: AsyncClient, user, token, partner):
         """
         Credentials are not unique
         """
@@ -140,3 +142,58 @@ class TestRegisterAsPartner:
         )
 
         assert response.status_code == status.HTTP_409_CONFLICT
+
+
+class TestCreateItem:
+
+    async def test_create_item(self, ac: AsyncClient, user, token, partner, category):
+        response = await ac.post('/partners/create-item/',
+                                 json={
+                                     "title": "Iphone 15 Pro Max",
+                                     "description": "Cool phone",
+                                     "price": 1.2,
+                                     "category_id": category.id,
+                                     "data": '{"size": "42", "color": "red", "material": "leather"}'
+                                      },
+                                 headers={"Authorization": token}
+                                 )
+        assert response.status_code == status.HTTP_201_CREATED
+
+    async def test_item_exits(self, ac: AsyncClient, user, token, partner, category, item):
+        response = await ac.post('/partners/create-item/',
+                                 json={
+                                     "title": "Iphone 15 Pro Max",
+                                     "description": "Cool phone",
+                                     "price": 1.2,
+                                     "category_id": category.id,
+                                     "data": '{"size": "42", "color": "red", "material": "leather"}'
+                                 },
+                                 headers={"Authorization": token}
+                                 )
+        assert response.status_code == status.HTTP_409_CONFLICT
+
+    async def test_category_does_not_exist(self, ac: AsyncClient, user, token, partner, category):
+        response = await ac.post('/partners/create-item/',
+                                 json={
+                                     "title": "Iphone 15 Pro Max",
+                                     "description": "Cool phone",
+                                     "price": 1.2,
+                                     "category_id": category.id + 10,
+                                     "data": '{"size": "42", "color": "red", "material": "leather"}'
+                                      },
+                                 headers={"Authorization": token}
+                                 )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    async def test_category_data_does_not_match(self, ac: AsyncClient, user, token, partner, category):
+        response = await ac.post('/partners/create-item/',
+                                 json={
+                                     "title": "Iphone 15 Pro Max",
+                                     "description": "Cool phone",
+                                     "price": 1.2,
+                                     "category_id": category.id,
+                                     "data": '{"size": "42", "color": "red", "material": "leather"}'
+                                      },
+                                 headers={"Authorization": token}
+                                 )
+        assert response.status_code == status.HTTP_201_CREATED

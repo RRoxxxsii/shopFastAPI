@@ -4,3 +4,7 @@ from .token.implementation import TokenRepository
 from .token.interface import AbstractTokenRepository
 from .user.implementation import UserRepository
 from .user.interface import AbstractUserRepository
+from .category.interface import AbstractCategoryRepository
+from .category.implementation import CategoryRepository
+from .item.interface import AbstractItemRepository
+from .item.implementation import ItemRepository

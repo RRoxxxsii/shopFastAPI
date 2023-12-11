@@ -4,13 +4,15 @@ from sqlalchemy.sql import func
 
 from src.infrastructure.database.base import AbstractModel
 
-from . import auth
+from . import auth, item
+from .base import time_created
 
 
 class Partner(AbstractModel):
     __tablename__ = "partners"
 
     user: Mapped["auth.User"] = relationship(back_populates="partner", uselist=False)
+    items: Mapped[list["item.Item"]] = relationship(back_populates="partner")
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
     mobile: Mapped[str] = mapped_column(String(30), unique=True, nullable=False)
@@ -25,7 +27,7 @@ class Partner(AbstractModel):
     an: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)  # AccountNumber
 
     additional: Mapped[str | None] = mapped_column(Text, nullable=True)
-    time_created = mapped_column(DateTime(timezone=True), server_default=func.now())
+    time_created: Mapped[time_created]
 
     # If approved, is allowed to sell products
     is_approved: Mapped[bool] = mapped_column(default=False)

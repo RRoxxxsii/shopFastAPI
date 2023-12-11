@@ -1,7 +1,5 @@
 from pydantic import BaseModel, Field
 
-from src.domain.shop.dto.auth import UserDTO
-
 
 class PartnerDTO(BaseModel):
     mobile: str
@@ -18,6 +16,3 @@ class PartnerDTO(BaseModel):
 class UserPartnerDTO(PartnerDTO):
     user_id: int
 
-
-class FullUserPartnerDTO(UserDTO, UserPartnerDTO):
-    pass

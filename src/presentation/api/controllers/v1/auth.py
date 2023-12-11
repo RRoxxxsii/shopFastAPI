@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
-from src.domain.shop.dto.auth import AuthDTO, CreateUserDTO
+from src.domain.shop.dto.auth import AuthDTO, UserDTO
 from src.domain.shop.exceptions.user import (
     PasswordIsNotCorrect,
     UserExists,
@@ -46,7 +46,7 @@ async def register(
     user_schema: RegisterUserIn,
     service: CreateUserService = Depends(create_user_service),
 ):
-    user_dto = CreateUserDTO(**user_schema.model_dump(exclude={"password2"}))
+    user_dto = UserDTO(**user_schema.model_dump(exclude={"password2"}))
     try:
         user = await service.execute(user_dto)
     except UserExists:

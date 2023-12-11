@@ -1,6 +1,6 @@
 import uuid
 
-from src.domain.shop.dto.auth import AuthDTO, CreateUserDTO
+from src.domain.shop.dto.auth import AuthDTO, UserDTO
 from src.domain.shop.exceptions.user import (
     PasswordIsNotCorrect,
     UserExists,
@@ -12,7 +12,7 @@ from src.infrastructure.secure.pwd import check_password
 
 
 class CreateUser(UserUseCase):
-    async def __call__(self, user_dto: CreateUserDTO) -> User:
+    async def __call__(self, user_dto: UserDTO) -> User:
         async with self.uow:
             if await self.uow.user_repo.get_user_or_none(user_dto.email):
                 raise UserExists("User with this email already exists")
