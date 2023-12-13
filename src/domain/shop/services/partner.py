@@ -2,8 +2,9 @@ from src.domain.shop.dto.auth import UserDTO
 from src.domain.shop.dto.item import ItemDTO
 from src.domain.shop.dto.partner import PartnerDTO, UserPartnerDTO
 from src.domain.shop.usecases.partner.usecases import (
+    CreateItem,
     CreatePartnerUserDoesNotExists,
-    CreatePartnerUserExists, CreateItem,
+    CreatePartnerUserExists,
 )
 from src.infrastructure.api_client.partners.client import AbstractAPIClient
 from src.infrastructure.database.models.item import Item
@@ -29,7 +30,7 @@ class CreatePartnerUserDoesNotExistsService:
         self.api_client: AbstractAPIClient = api_client
         self.uow: AbstractUnitOfWork = uow
 
-    async def _create_partner(self, partner_dto: PartnerDTO, user_dto: UserDTO):
+    async def _create_partner(self, partner_dto: PartnerDTO, user_dto: UserDTO) -> Partner:
         return await CreatePartnerUserDoesNotExists(self.uow, self.api_client)(partner_dto, user_dto)
 
     async def execute(self, partner_dto: PartnerDTO, user_dto: UserDTO) -> Partner:
@@ -38,7 +39,6 @@ class CreatePartnerUserDoesNotExistsService:
 
 
 class CreateItemService:
-
     def __init__(self, uow: AbstractUnitOfWork):
         self.uow: AbstractUnitOfWork = uow
 

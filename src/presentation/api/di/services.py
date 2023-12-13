@@ -1,8 +1,10 @@
 from fastapi import Depends
 
+from src.domain.shop.services.item import ItemService
 from src.domain.shop.services.partner import (
+    CreateItemService,
     CreatePartnerUserDoesNotExistsService,
-    CreatePartnerUserExistsService, CreateItemService,
+    CreatePartnerUserExistsService,
 )
 from src.domain.shop.services.user import CreateTokenService, CreateUserService
 from src.infrastructure.api_client.partners.client import AbstractAPIClient, Client
@@ -34,3 +36,7 @@ def create_partner_user_exists_service(
     api_client: AbstractAPIClient = Depends(Client),
 ):
     return CreatePartnerUserExistsService(api_client, uow)
+
+
+def get_item_by_id_service(uow: AbstractUnitOfWork = Depends(get_sqlalchemy_uow)):
+    return ItemService(uow)

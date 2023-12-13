@@ -15,4 +15,3 @@ class PartnerDTO(BaseModel):
 
 class UserPartnerDTO(PartnerDTO):
     user_id: int
-

@@ -12,7 +12,9 @@ class ItemDTO(BaseModel):
     description: str
     price: Decimal
     data: Json
-    # images: list[ImageDTO]
-
     category_id: int
     partner_id: int
+
+
+class ItemIdDTO(BaseModel):
+    item_id: int

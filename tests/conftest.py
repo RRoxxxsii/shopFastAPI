@@ -11,6 +11,8 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 import src.infrastructure.database.base
 from src.infrastructure.database import DATABASE_URL, get_async_session, metadata
 from src.infrastructure.database.models.auth import Token, User
+from src.infrastructure.database.models.item import Category, Item
+from src.infrastructure.database.models.partner import Partner
 from src.infrastructure.secure import pwd_context
 from src.main import app
 
@@ -81,3 +83,51 @@ async def token(user):
         session.add(token)
         await session.commit()
     return str(token)
+
+
+@pytest.fixture()
+async def category():
+    async with async_session_maker() as session:
+        category = Category(title="Shoes", description="...", data={"size": None, "color": None, "material": None})
+        session.add(category)
+        await session.commit()
+        await session.refresh(category)
+    return category
+
+
+@pytest.fixture()
+async def item(category, partner):
+    async with async_session_maker() as session:
+        item = Item(
+            title="Iphone 15 Pro Max",
+            description="Cool phone",
+            price=1.2,
+            category_id=category.id,
+            data={"size": "42", "color": "red", "material": "leather"},
+            partner_id=partner.id,
+        )
+        session.add(item)
+        await session.commit()
+        await session.refresh(item)
+    return item
+
+
+@pytest.fixture()
+async def partner(user):
+    async with async_session_maker() as session:
+        seller = Partner(
+            user=user,
+            mobile="88005553535",
+            company_name="Name",
+            company_description="Description",
+            bank_name="Sber",
+            tin="381111467850",
+            bic="044525225",
+            trrc="775001001",
+            an="783768329692",
+            is_approved=True,
+        )
+        session.add(seller)
+        await session.commit()
+        await session.refresh(seller)
+    return seller

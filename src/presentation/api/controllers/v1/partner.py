@@ -1,23 +1,27 @@
 import json
+
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
 from src.domain.shop.dto.auth import UserDTO
-from src.domain.shop.dto.partner import PartnerDTO, UserPartnerDTO
 from src.domain.shop.dto.item import ItemDTO
+from src.domain.shop.dto.partner import PartnerDTO, UserPartnerDTO
+from src.domain.shop.exceptions.category import (
+    CategoryDataDoesNotMatch,
+    CategoryDoesNotExist,
+)
+from src.domain.shop.exceptions.item import ItemExists
 from src.domain.shop.exceptions.partner import DataNotValid, PartnerExists
 from src.domain.shop.exceptions.user import UserExists
-from src.domain.shop.exceptions.category import CategoryDataDoesNotMatch, CategoryDoesNotExist
-from src.domain.shop.exceptions.item import ItemExists
 from src.domain.shop.services.partner import (
+    CreateItemService,
     CreatePartnerUserDoesNotExistsService,
     CreatePartnerUserExistsService,
-    CreateItemService
 )
 from src.infrastructure.database.models.auth import User
 from src.infrastructure.database.models.partner import Partner
-from src.infrastructure.secure.user import get_current_user
 from src.infrastructure.secure.partner import get_current_partner_approved
+from src.infrastructure.secure.user import get_current_user
 from src.presentation.api.controllers.docs.partners import (
     register_as_partner,
     upgrade_to_partner,
@@ -25,13 +29,13 @@ from src.presentation.api.controllers.docs.partners import (
 from src.presentation.api.controllers.v1.requests.partners import (
     PartnerIn,
     UserPartnerIn,
-    ItemIn
 )
-from src.presentation.api.controllers.v1.responses.partners import PartnerOut, ItemOut
+from src.presentation.api.controllers.v1.responses.item import ItemIn, ItemOut
+from src.presentation.api.controllers.v1.responses.partners import PartnerOut
 from src.presentation.api.di.services import (
+    create_item_service,
     create_partner_user_does_not_exist_service,
     create_partner_user_exists_service,
-    create_item_service,
 )
 
 router = APIRouter()
@@ -88,17 +92,15 @@ async def become_partner_exist_account(
         return partner
 
 
-@router.post(
-    '/create-item/',
-    response_model=ItemOut,
-    status_code=status.HTTP_201_CREATED
-)
+@router.post("/create-item/", response_model=ItemOut, status_code=status.HTTP_201_CREATED)
 async def create_item(
-        item_schema: ItemIn,
-        service: CreateItemService = Depends(create_item_service),
-        partner: Partner = Depends(get_current_partner_approved)
+    item_schema: ItemIn,
+    service: CreateItemService = Depends(create_item_service),
+    partner: Partner = Depends(get_current_partner_approved),
 ):
-    item_dto = ItemDTO(partner_id=partner.id, data=json.dumps(item_schema.data), **item_schema.model_dump(exclude={'data'}))
+    item_dto = ItemDTO(
+        partner_id=partner.id, data=json.dumps(item_schema.data), **item_schema.model_dump(exclude={"data"})
+    )
     try:
         item = await service.execute(item_dto)
     except ItemExists:

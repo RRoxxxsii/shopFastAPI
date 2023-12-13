@@ -1,7 +1,10 @@
 from src.domain.shop.dto.auth import UserDTO
 from src.domain.shop.dto.item import ItemDTO
 from src.domain.shop.dto.partner import PartnerDTO, UserPartnerDTO
-from src.domain.shop.exceptions.category import CategoryDoesNotExist, CategoryDataDoesNotMatch
+from src.domain.shop.exceptions.category import (
+    CategoryDataDoesNotMatch,
+    CategoryDoesNotExist,
+)
 from src.domain.shop.exceptions.item import ItemExists
 from src.domain.shop.exceptions.partner import DataNotValid, PartnerExists
 from src.domain.shop.exceptions.user import UserExists
@@ -45,18 +48,17 @@ class CreatePartnerUserExists(PartnerUseCase):
 
 
 class CreateItem(BaseExtendedUseCase):
-
     async def __call__(self, dto: ItemDTO) -> Item:
         async with self.uow:
             item = await self.uow.item_repo.get_item_or_none(dto)
             if item:
-                raise ItemExists('Item with a field from your request already exists')
+                raise ItemExists("Item with a field from your request already exists")
             category = await self.uow.category_repo.get_by_id(pk=dto.category_id)
             if not category:
-                raise CategoryDoesNotExist('Can not find is not valid')
+                raise CategoryDoesNotExist("Can not find is not valid")
             if category.data.keys() == dto.data.keys():
                 item = await self.uow.item_repo.create(**dto.model_dump())
             else:
-                raise CategoryDataDoesNotMatch('Data from your input does not match the category')
+                raise CategoryDataDoesNotMatch("Data from your input does not match the category")
             await self.uow.commit()
             return item
