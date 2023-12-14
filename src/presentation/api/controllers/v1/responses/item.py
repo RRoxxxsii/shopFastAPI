@@ -1,7 +1,7 @@
 import datetime
 from decimal import Decimal
 
-from pydantic import BaseModel, Json
+from pydantic import BaseModel, ConfigDict, Json
 
 
 class ItemOut(BaseModel):
@@ -21,3 +21,13 @@ class ItemIn(BaseModel):
     price: Decimal
     data: Json
     category_id: int
+
+
+class ItemListOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    title: str
+    price: Decimal
+    category_id: int
+    partner_id: int

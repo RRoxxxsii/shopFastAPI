@@ -11,10 +11,10 @@ from src.infrastructure.database.repositories.item.interface import (
 class ItemRepository(AbstractItemRepository, SQLAlchemyRepository):
     model = Item
 
-    async def get_item_or_none(self, dto: ItemDTO):
-        stmt = select(Item).where(
-            Item.title == dto.title,
+    async def get_item_or_none(self, dto: ItemDTO) -> Item:
+        stmt = select(self.model).where(
+            self.model.title == dto.title,
         )
         result = await self.session.execute(stmt)
-        partner = result.scalar_one_or_none()
-        return partner
+        item = result.scalar_one_or_none()
+        return item

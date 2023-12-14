@@ -161,8 +161,8 @@ class TestCreateItem:
         response = await ac.post(
             "/partners/create-item/",
             json={
-                "title": "Iphone 15 Pro Max",
-                "description": "Cool phone",
+                "title": "Nike",
+                "description": "Cool shoes",
                 "price": 1.2,
                 "category_id": category.id,
                 "data": '{"size": "42", "color": "red", "material": "leather"}',

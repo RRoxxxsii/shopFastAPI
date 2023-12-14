@@ -11,12 +11,12 @@ class PartnerRepository(AbstractPartnerRepository, UserRepository):
     model = Partner
 
     async def get_partner_or_none(self, dto) -> Partner | None:
-        stmt = select(Partner).where(
+        stmt = select(self.model).where(
             or_(
-                Partner.tin == dto.tin,
-                Partner.an == dto.an,
-                Partner.company_name == dto.company_name,
-                Partner.mobile == dto.mobile,
+                self.model.tin == dto.tin,
+                self.model.an == dto.an,
+                self.model.company_name == dto.company_name,
+                self.model.mobile == dto.mobile,
             )
         )
         result = await self.session.execute(stmt)

@@ -11,6 +11,6 @@ class UserRepository(AbstractUserRepository, SQLAlchemyRepository):
     model = User
 
     async def get_user_or_none(self, email: str) -> User | None:
-        stmt = select(User).where(User.email == email)
+        stmt = select(self.model).where(self.model.email == email)
         user = await self.session.execute(stmt)
         return user.scalar_one_or_none()

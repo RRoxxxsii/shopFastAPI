@@ -33,7 +33,7 @@ class SQLAlchemyRepository(AbstractRepository):
     async def find_all(self):
         stmt = select(self.model)
         res = await self.session.execute(stmt)
-        return res.all()
+        return res.scalars().all()
 
     async def get_by_id(self, pk: int) -> type[AbstractModel] | None:
         stmt = select(self.model).where(self.model.id == pk)

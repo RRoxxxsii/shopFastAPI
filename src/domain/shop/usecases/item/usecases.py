@@ -12,3 +12,11 @@ class GetItemById(ItemUseCase):
                 raise ItemDoesNotExists("Item with this id does not exist")
             await self.uow.commit()
             return item
+
+
+class GetListItems(ItemUseCase):
+    async def __call__(self) -> list[Item]:
+        async with self.uow:
+            items = await self.uow.item_repo.find_all()
+            await self.uow.commit()
+            return items

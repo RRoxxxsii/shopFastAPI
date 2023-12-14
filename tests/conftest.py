@@ -99,11 +99,28 @@ async def category():
 async def item(category, partner):
     async with async_session_maker() as session:
         item = Item(
-            title="Iphone 15 Pro Max",
-            description="Cool phone",
-            price=1.2,
+            title="Nike",
+            description="Cool shoes",
+            price=10,
             category_id=category.id,
             data={"size": "42", "color": "red", "material": "leather"},
+            partner_id=partner.id,
+        )
+        session.add(item)
+        await session.commit()
+        await session.refresh(item)
+    return item
+
+
+@pytest.fixture()
+async def item2(category, partner):
+    async with async_session_maker() as session:
+        item = Item(
+            title="Adidas",
+            description="Cool shoes",
+            price=10,
+            category_id=category.id,
+            data={"size": "41", "color": "blue", "material": "leather"},
             partner_id=partner.id,
         )
         session.add(item)
