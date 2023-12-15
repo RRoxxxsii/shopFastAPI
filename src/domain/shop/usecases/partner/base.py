@@ -1,5 +1,5 @@
 from src.domain.shop.usecases.base import BaseExtendedUseCase
-from src.infrastructure.api_client.partners.client import AbstractAPIClient
+from src.infrastructure.api_client.partners.interface import AbstractAPIClient
 from src.infrastructure.database.uow import AbstractUnitOfWork
 
 

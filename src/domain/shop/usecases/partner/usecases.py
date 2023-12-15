@@ -22,7 +22,7 @@ class CreatePartnerUserDoesNotExists(PartnerUseCase):
                 raise UserExists("User with this credentials already exists")
             if await self.uow.partner_repo.get_partner_or_none(partner_dto):
                 raise PartnerExists("Partner with this credentials already exists")
-            if not await self.api_client.call(partner_dto):
+            if not await self.api_client.execute(partner_dto):
                 raise DataNotValid("Data you provided is not valid")
             user = await self.uow.user_repo.create(
                 hashed_password=hash_password(user_dto.password1),
@@ -40,7 +40,7 @@ class CreatePartnerUserExists(PartnerUseCase):
         async with self.uow:
             if await self.uow.partner_repo.get_partner_or_none(dto):
                 raise PartnerExists("Partner with this credentials already exists")
-            if not await self.api_client.call(dto):
+            if not await self.api_client.execute(dto):
                 raise DataNotValid("Data you provided is not valid")
             partner = await self.uow.partner_repo.create(**dto.model_dump())
             await self.uow.commit()

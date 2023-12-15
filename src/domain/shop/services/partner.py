@@ -6,7 +6,7 @@ from src.domain.shop.usecases.partner.usecases import (
     CreatePartnerUserDoesNotExists,
     CreatePartnerUserExists,
 )
-from src.infrastructure.api_client.partners.client import AbstractAPIClient
+from src.infrastructure.api_client.partners.interface import AbstractAPIClient
 from src.infrastructure.database.models.item import Item
 from src.infrastructure.database.models.partner import Partner
 from src.infrastructure.database.uow import AbstractUnitOfWork
