@@ -19,6 +19,9 @@ class Category(AbstractModel):
     data: Mapped[dict[str, Any]] = mapped_column(JSON)
     items: Mapped[list["Item"]] = relationship(back_populates="category")
 
+    def __repr__(self):
+        return self.title
+
 
 class Item(AbstractModel):
     __tablename__ = "items"
@@ -35,3 +38,6 @@ class Item(AbstractModel):
     partner: Mapped["partner.Partner"] = relationship(back_populates="items")
 
     time_created: Mapped[time_created]
+
+    def __repr__(self):
+        return self.title

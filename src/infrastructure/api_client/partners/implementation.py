@@ -7,6 +7,7 @@ from src.infrastructure.api_client.partners.interface import AbstractAPIClient
 
 
 class Client(AbstractAPIClient):
+
     def __init__(self, session):
         self.session = session
 

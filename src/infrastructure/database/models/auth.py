@@ -26,6 +26,9 @@ class User(AbstractModel):
     partner: Mapped["partner.Partner"] = relationship(back_populates="user", uselist=False, lazy="selectin")
     tokens: Mapped["Token"] = relationship(back_populates="user")
 
+    def __repr__(self):
+        return f'{self.name} {self.surname}'
+
 
 class Token(AbstractModel):
     __tablename__ = "tokens"
