@@ -4,7 +4,7 @@ from sqlalchemy.sql import func
 
 from src.infrastructure.database.base import AbstractModel
 
-from . import partner
+from . import partner  # noqa: F401
 from .base import time_created
 
 
@@ -23,11 +23,13 @@ class User(AbstractModel):
     is_admin: Mapped[bool] = mapped_column(default=False)
     is_stuff: Mapped[bool] = mapped_column(default=False)
 
-    partner: Mapped["partner.Partner"] = relationship(back_populates="user", uselist=False, lazy="selectin")
+    partner: Mapped["partner.Partner"] = relationship(  # noqa: F811
+        back_populates="user", uselist=False, lazy="selectin"
+    )
     tokens: Mapped["Token"] = relationship(back_populates="user")
 
     def __repr__(self):
-        return f'{self.name} {self.surname}'
+        return f"{self.name} {self.surname}"
 
 
 class Token(AbstractModel):

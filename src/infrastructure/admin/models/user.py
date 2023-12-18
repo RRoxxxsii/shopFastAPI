@@ -1,9 +1,9 @@
 from sqladmin import ModelView
 
-from src.infrastructure.database.models.auth import User, Token
+from src.infrastructure.database.models.auth import Token, User
 
 
-class UserAdmin(ModelView, model=User):
+class UserAdmin(ModelView, model=User):  # type: ignore
     column_list = [
         User.id,
         User.name,
@@ -14,12 +14,9 @@ class UserAdmin(ModelView, model=User):
         User.is_partner,
         User.email_confirmed,
         User.is_stuff,
-        User.partner
+        User.partner,
     ]
 
 
-class TokenAdmin(ModelView, model=Token):
-    column_list = [
-        Token.id,
-        Token.user_id
-    ]
+class TokenAdmin(ModelView, model=Token):  # type: ignore
+    column_list = [Token.id, Token.user_id]

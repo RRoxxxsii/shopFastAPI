@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 
 
 class AbstractAPIClient(ABC):
-
     @abstractmethod
     def __init__(self, session):
         raise NotImplementedError

@@ -3,7 +3,7 @@ from sqladmin import ModelView
 from src.infrastructure.database.models.partner import Partner
 
 
-class PartnerAdmin(ModelView, model=Partner):
+class PartnerAdmin(ModelView, model=Partner):  # type: ignore
     column_list = [
         Partner.id,
         Partner.user,
@@ -13,5 +13,5 @@ class PartnerAdmin(ModelView, model=Partner):
         Partner.company_description,
         Partner.time_created,
         Partner.additional,
-        Partner.is_approved
+        Partner.is_approved,
     ]

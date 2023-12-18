@@ -5,7 +5,7 @@ from sqlalchemy import JSON, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.infrastructure.database.base import AbstractModel
-from src.infrastructure.database.models import partner
+from src.infrastructure.database.models import partner  # noqa: F401
 
 from .base import time_created
 
@@ -35,7 +35,7 @@ class Item(AbstractModel):
     category: Mapped["Category"] = relationship(back_populates="items")
 
     partner_id: Mapped[int] = mapped_column(ForeignKey("partners.id", ondelete="CASCADE"))
-    partner: Mapped["partner.Partner"] = relationship(back_populates="items")
+    partner: Mapped["partner.Partner"] = relationship(back_populates="items")  # noqa: F811
 
     time_created: Mapped[time_created]
 

@@ -3,7 +3,7 @@ from sqladmin import ModelView
 from src.infrastructure.database.models.item import Category, Item
 
 
-class CategoryAdmin(ModelView, model=Category):
+class CategoryAdmin(ModelView, model=Category):  # type: ignore
     column_list = [
         Category.id,
         Category.title,
@@ -12,7 +12,7 @@ class CategoryAdmin(ModelView, model=Category):
     ]
 
 
-class ItemAdmin(ModelView, model=Item):
+class ItemAdmin(ModelView, model=Item):  # type: ignore
     column_list = [
         Item.id,
         Item.title,
@@ -22,5 +22,5 @@ class ItemAdmin(ModelView, model=Item):
         Item.partner_id,
         Item.category,
         Item.category_id,
-        Item.time_created
+        Item.time_created,
     ]
