@@ -35,12 +35,12 @@ class SQLAlchemyRepository(AbstractRepository):
         res = await self.session.execute(stmt)
         return res.scalars().all()
 
-    async def get_by_id(self, pk: int) -> type[AbstractModel] | None:
+    async def get_by_id(self, pk: int) -> AbstractModel | None:
         stmt = select(self.model).where(self.model.id == pk)
         res = await self.session.execute(stmt)
         return res.scalar_one_or_none()
 
-    async def create(self, **kwargs):
+    async def create(self, **kwargs) -> AbstractModel:
         obj = self.model(**kwargs)
         self.session.add(obj)
         await self.session.commit()
