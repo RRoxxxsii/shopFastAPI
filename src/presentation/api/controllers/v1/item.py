@@ -16,11 +16,7 @@ from src.presentation.api.di.services import (
 router = APIRouter()
 
 
-@router.get(
-    "/get-item/",
-    response_model=ItemOut,
-    responses=get_item
-)
+@router.get("/get-item/", response_model=ItemOut, responses=get_item)
 async def get_item_by_id(item_id: int, get_item_service: ItemDetailService = Depends(get_item_by_id_service)):
     dto = ItemIdDTO(item_id=item_id)
     try:
