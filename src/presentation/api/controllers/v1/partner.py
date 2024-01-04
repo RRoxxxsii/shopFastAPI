@@ -22,9 +22,9 @@ from src.infrastructure.database.models.auth import User
 from src.infrastructure.database.models.partner import Partner
 from src.infrastructure.secure.partner import get_current_partner_approved
 from src.infrastructure.secure.user import get_current_user
-from src.presentation.api.controllers.docs.partners import (
+from src.presentation.api.controllers.docs.partner import (
     register_as_partner,
-    upgrade_to_partner,
+    upgrade_to_partner, create_item,
 )
 from src.presentation.api.controllers.v1.requests.partners import (
     PartnerIn,
@@ -92,7 +92,12 @@ async def become_partner_exist_account(
         return partner
 
 
-@router.post("/create-item/", response_model=ItemOut, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/create-item/",
+    response_model=ItemOut,
+    status_code=status.HTTP_201_CREATED,
+    responses=create_item
+)
 async def create_item(
     item_schema: ItemIn,
     service: CreateItemService = Depends(create_item_service),
