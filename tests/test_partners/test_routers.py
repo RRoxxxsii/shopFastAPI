@@ -5,7 +5,6 @@ from starlette import status
 
 class TestBecomePartnerExistsAccount:
     async def test_become_partner(self, ac: AsyncClient, mocker: MockFixture, user, token):
-
         mocker.patch(
             "src.infrastructure.api_client.partners.implementation.Client.execute", return_value=True
         )  # Mock Fake response
@@ -83,7 +82,6 @@ class TestBecomePartnerExistsAccount:
 
 class TestRegisterAsPartner:
     async def test_register(self, ac: AsyncClient, mocker: MockFixture):
-
         mocker.patch(
             "src.infrastructure.api_client.partners.implementation.Client.execute", return_value=True
         )  # Mock Fake response
